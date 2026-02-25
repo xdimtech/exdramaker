@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist/types",
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "disableReferencedProjectLoad": true
+  },
+  "include": ["**/*"],
+  "exclude": ["**/*.test.*", "tests", "types", "examples", "dist"]
+}

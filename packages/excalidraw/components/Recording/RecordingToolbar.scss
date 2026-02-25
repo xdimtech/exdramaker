@@ -1,0 +1,187 @@
+.RecordingToolbar {
+  position: fixed;
+  z-index: 9997;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+
+  &--dragging {
+    cursor: grabbing;
+  }
+
+  // ── Small icon buttons (settings / teleprompter) ────────────────────────
+
+  &__icon-button {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 0;
+    background: #f4f4f4;
+    color: #555;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+    flex-shrink: 0;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      background: #ededed;
+      color: #111;
+    }
+
+    &--active {
+      background: #111;
+      color: #fff;
+    }
+
+    &--disabled,
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+
+  // ── Idle: record button ──────────────────────────────────────────────────
+
+  &__record-button {
+    border: 0;
+    background: #d94b40;
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 6px 16px rgba(217, 75, 64, 0.3);
+    cursor: pointer;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      background: #c43b30;
+    }
+  }
+
+  &__record-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ffffff;
+    flex-shrink: 0;
+  }
+
+  // ── Pre-recording: cancel + begin ───────────────────────────────────────
+
+  &__cancel-button {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: transparent;
+    color: #555;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &__begin-button {
+    border: 0;
+    background: #d94b40;
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 6px 16px rgba(217, 75, 64, 0.3);
+    cursor: pointer;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      background: #c43b30;
+    }
+  }
+
+  // ── Recording / Paused: timer + action + stop ────────────────────────────
+
+  &__timer {
+    font-size: 13px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: #555;
+    letter-spacing: 0.5px;
+    padding: 0 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &--active {
+      color: #d94b40;
+    }
+  }
+
+  &__action-button {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: transparent;
+    color: #333;
+    padding: 7px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  &__stop-button {
+    border: 0;
+    background: #333;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      background: #111;
+    }
+  }
+}

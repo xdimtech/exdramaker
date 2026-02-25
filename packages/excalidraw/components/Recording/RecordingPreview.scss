@@ -1,0 +1,100 @@
+.RecordingPreview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex: 0 0 auto;
+  height: clamp(260px, 38vh, 360px);
+
+  &__frame {
+    position: relative;
+    border-radius: 0;
+    background: linear-gradient(135deg, #e6a4d9 0%, #9ed18a 100%);
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: width 0.3s ease, height 0.3s ease, padding 0.3s ease;
+  }
+
+  &__frame-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    animation: previewFade 0.3s ease;
+  }
+
+  &__card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+    overflow: hidden;
+    transition: width 0.3s ease, height 0.3s ease, border-radius 0.3s ease,
+      box-shadow 0.3s ease, transform 0.3s ease;
+    z-index: 1;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &__line {
+    position: absolute;
+    left: 12%;
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  &__line--long {
+    width: 60%;
+    top: 45%;
+  }
+
+  &__line--medium {
+    width: 48%;
+    top: 52%;
+  }
+
+  &__line--short {
+    width: 32%;
+    top: 60%;
+  }
+
+  &__dot {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+  }
+
+  &__dot--pink {
+    right: 18%;
+    top: 22%;
+    background: rgba(236, 117, 117, 0.65);
+    box-shadow: 0 0 0 3px rgba(236, 117, 117, 0.2);
+  }
+
+  &__dot--gray {
+    right: 12px;
+    bottom: 12px;
+    background: #c6c6c6;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8);
+  }
+}
+
+@keyframes previewFade {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}

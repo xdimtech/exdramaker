@@ -1,0 +1,53 @@
+.PaymentDialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0;
+
+  &__title {
+    margin: 0;
+  }
+
+  &__qrcode {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    background: #fff;
+    border-radius: 0.5rem;
+    border: 1px solid #e0e0e0;
+
+    $size: 180px;
+    width: $size;
+    height: $size;
+
+    & svg {
+      width: $size;
+      height: $size;
+    }
+
+    &--loading {
+      background: var(--island-bg-color);
+      border: 1px solid var(--dialog-border-color);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__status {
+    font-size: 0.9rem;
+    color: var(--color-gray-70);
+  }
+
+  &__status--success {
+    color: var(--color-success);
+  }
+
+  &__status--error {
+    color: var(--color-danger);
+  }
+}

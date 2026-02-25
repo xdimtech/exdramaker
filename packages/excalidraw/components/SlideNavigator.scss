@@ -1,0 +1,104 @@
+.slide-navigator {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  z-index: var(--zIndex-ui-main-menu, 110);
+  pointer-events: none;
+  max-height: 66vh;
+  padding: 8px;
+  background: var(--island-bg-color, #fff);
+  border-radius: 8px 0 0 8px;
+  box-shadow: var(--shadow-md, 0 2px 8px rgba(0, 0, 0, 0.1));
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    max-height: calc(66vh - 48px);
+    padding-right: 4px;
+
+    // Custom scrollbar styling
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-color, #d0d0d0);
+      border-radius: 2px;
+    }
+  }
+
+  &__button {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--default-border-color, #e5e5e5);
+    background: var(--island-bg-color, #fff);
+    color: var(--text-secondary-color, #6b7280);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    pointer-events: auto;
+    flex-shrink: 0;
+
+    &:hover {
+      border-color: var(--color-primary, #6965db);
+      color: var(--color-primary, #6965db);
+    }
+
+    &--active {
+      background: #000;
+      border-color: #000;
+      color: #fff;
+
+      &:hover {
+        background: #333;
+        border-color: #333;
+        color: #fff;
+      }
+    }
+
+    &--add {
+      width: 32px;
+      height: 32px;
+      margin-top: 6px;
+      border: 1px solid var(--default-border-color, #e5e5e5);
+      background: var(--island-bg-color, #fff);
+      color: var(--text-tertiary-color, #9ca3af);
+      font-size: 18px;
+      font-weight: 400;
+
+      &:hover {
+        border-color: var(--color-primary, #6965db);
+        color: var(--color-primary, #6965db);
+      }
+    }
+
+    &--record {
+      width: 32px;
+      height: 32px;
+      margin-top: 6px;
+      border: 1px solid var(--default-border-color, #e5e5e5);
+      background: var(--island-bg-color, #fff);
+      color: #ef4444;
+      font-size: 14px;
+
+      &:hover {
+        border-color: #ef4444;
+        color: #ef4444;
+      }
+    }
+  }
+}

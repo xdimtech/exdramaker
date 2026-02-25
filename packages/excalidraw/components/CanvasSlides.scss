@@ -1,0 +1,175 @@
+.canvas-slides-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  overflow: visible;
+}
+
+.canvas-slide {
+  position: absolute;
+  background: transparent;
+  border: 3px solid var(--default-border-color, #6b7280);
+  border-radius: 8px;
+  overflow: visible;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  pointer-events: none;
+
+  &--active {
+    border-color: var(--color-primary, #6965db);
+    box-shadow: 0 0 0 4px rgba(105, 101, 219, 0.2);
+  }
+
+  &:hover:not(&--active) {
+    border-color: var(--color-primary-light, #6965db80);
+  }
+
+  // Drag zone - covers entire slide area, only border area captures events
+  // Uses nested elements to create border-only hit area
+  &__drag-zone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none; // Let events pass through to children
+
+    // Top edge handle
+    &-top {
+      position: absolute;
+      top: -12px;
+      left: 12px;
+      right: 12px;
+      height: 24px; // Extend into slide area
+      cursor: move;
+      pointer-events: auto;
+      z-index: 10;
+
+      &:active {
+        cursor: grabbing;
+      }
+    }
+
+    // Bottom edge handle
+    &-bottom {
+      position: absolute;
+      bottom: -12px;
+      left: 12px;
+      right: 12px;
+      height: 24px;
+      cursor: move;
+      pointer-events: auto;
+      z-index: 10;
+
+      &:active {
+        cursor: grabbing;
+      }
+    }
+
+    // Left edge handle
+    &-left {
+      position: absolute;
+      top: 12px;
+      bottom: 12px;
+      left: -12px;
+      width: 24px;
+      cursor: move;
+      pointer-events: auto;
+      z-index: 10;
+
+      &:active {
+        cursor: grabbing;
+      }
+    }
+
+    // Right edge handle
+    &-right {
+      position: absolute;
+      top: 12px;
+      bottom: 12px;
+      right: -12px;
+      width: 24px;
+      cursor: move;
+      pointer-events: auto;
+      z-index: 10;
+
+      &:active {
+        cursor: grabbing;
+      }
+    }
+  }
+
+  // Header - positioned outside slide, top-left (for showing name only)
+  &__header {
+    position: absolute;
+    top: -24px;
+    left: 0;
+    height: 20px;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    cursor: move;
+    white-space: nowrap;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  &__name {
+    font-size: 11px;
+    color: var(--text-secondary-color, #6b7280);
+    pointer-events: auto;
+  }
+
+  // Content area - pass through ALL pointer events to canvas
+  // This allows clicking inside the slide to add elements
+  &__content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  // Resize handles - only corners
+  &__resize-handle {
+    position: absolute;
+    background: var(--color-primary, #6965db);
+    border-radius: 50%;
+    z-index: 10;
+    pointer-events: auto;
+    width: 12px;
+    height: 12px;
+
+    &--ne {
+      top: -6px;
+      right: -6px;
+      cursor: nesw-resize;
+    }
+
+    &--nw {
+      top: -6px;
+      left: -6px;
+      cursor: nwse-resize;
+    }
+
+    &--se {
+      bottom: -6px;
+      right: -6px;
+      cursor: nwse-resize;
+    }
+
+    &--sw {
+      bottom: -6px;
+      left: -6px;
+      cursor: nesw-resize;
+    }
+  }
+}

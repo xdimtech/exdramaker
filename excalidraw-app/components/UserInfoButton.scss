@@ -1,0 +1,129 @@
+// ── UserInfoButton ─────────────────────────────────────────────────────────
+//
+// Shows either a LOGIN button (unauthenticated) or a user avatar (authenticated)
+// in the top-right toolbar area.
+
+.UserInfoButton {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  // ── Unauthenticated: LOGIN button ─────────────────────────────────────────
+
+  &--login {
+    height: 32px;
+    padding: 0 14px;
+    border: 1.5px solid rgba(94, 92, 230, 0.55);
+    border-radius: 8px;
+    background: transparent;
+    color: #5e5ce6;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: rgba(94, 92, 230, 0.08);
+      border-color: #5e5ce6;
+    }
+  }
+
+  // ── Authenticated: avatar + dropdown ─────────────────────────────────────
+
+  &--user {
+    position: relative;
+  }
+
+  &__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 0;
+    background: #5e5ce6;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0;
+    transition: opacity 0.15s ease, transform 0.1s ease;
+    flex-shrink: 0;
+    text-transform: uppercase;
+
+    &:hover {
+      opacity: 0.88;
+      transform: scale(1.05);
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 180px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    padding: 6px;
+    z-index: 10000;
+    // Prevent layout from pushing content out of the viewport when near edges
+    transform-origin: top right;
+    animation: dropdownFadeIn 0.12s ease;
+  }
+
+  @keyframes dropdownFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  &__email {
+    padding: 6px 10px;
+    font-size: 11px;
+    color: #64748b; // slate-500
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+    user-select: none;
+  }
+
+  &__divider {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.06);
+    margin: 4px 0;
+  }
+
+  &__signout {
+    width: 100%;
+    padding: 7px 10px;
+    border: 0;
+    background: transparent;
+    color: #ef4444;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.1s ease;
+
+    &:hover:not(:disabled) {
+      background: rgba(239, 68, 68, 0.07);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
