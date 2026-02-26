@@ -38,6 +38,7 @@ export const RecordingDialog = ({ onCloseRequest }: RecordingDialogProps) => {
   const [status] = useAtom(recordingStatusAtom);
   const [duration] = useAtom(recordingDurationAtom);
   const [microphones, setMicrophones] = useState<MediaDeviceInfo[]>([]);
+  const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
 
   useEffect(() => {
     if (typeof navigator === "undefined") {
@@ -60,8 +61,11 @@ export const RecordingDialog = ({ onCloseRequest }: RecordingDialogProps) => {
         setMicrophones(
           devices.filter((device) => device.kind === "audioinput"),
         );
+        setCameras(
+          devices.filter((device) => device.kind === "videoinput"),
+        );
       } catch (error) {
-        console.error("Failed to enumerate audio devices:", error);
+        console.error("Failed to enumerate devices:", error);
       }
     };
 
@@ -74,11 +78,11 @@ export const RecordingDialog = ({ onCloseRequest }: RecordingDialogProps) => {
       try {
         const stream = await mediaDevices.getUserMedia({
           audio: true,
-          video: false,
+          video: true,
         });
         stream.getTracks().forEach((track) => track.stop());
       } catch (error) {
-        console.warn("Microphone permission not granted:", error);
+        console.warn("Media permission not granted:", error);
       }
 
       await loadDevices();
@@ -122,6 +126,31 @@ export const RecordingDialog = ({ onCloseRequest }: RecordingDialogProps) => {
 
     return options;
   }, [microphones, config.microphone]);
+
+  const cameraOptions = useMemo(() => {
+    const options = cameras.map((device, index) => {
+      const fallbackLabel =
+        device.deviceId === "default"
+          ? t("recording.cameraDefault" as any)
+          : `${t("recording.camera" as any)} ${index + 1}`;
+      return {
+        id: device.deviceId,
+        label: device.label || fallbackLabel,
+      };
+    });
+
+    if (
+      config.camera.deviceId &&
+      !options.some((option) => option.id === config.camera.deviceId)
+    ) {
+      options.unshift({
+        id: config.camera.deviceId,
+        label: t("recording.cameraUnavailable" as any),
+      });
+    }
+
+    return options;
+  }, [cameras, config.camera.deviceId]);
 
   return (
     <Dialog
@@ -280,6 +309,30 @@ export const RecordingDialog = ({ onCloseRequest }: RecordingDialogProps) => {
 
             {config.camera.enabled && (
               <>
+                {/* 摄像头选择 */}
+                <div className="RecordingDialog__section">
+                  <h3>{t("recording.selectCamera" as any)}</h3>
+                  <CustomSelect
+                    value={config.camera.deviceId ?? ""}
+                    options={[
+                      { value: "", label: t("recording.cameraAuto" as any) },
+                      ...cameraOptions.map((opt) => ({
+                        value: opt.id,
+                        label: opt.label,
+                      })),
+                    ]}
+                    onChange={(value) =>
+                      setConfig({
+                        ...config,
+                        camera: {
+                          ...config.camera,
+                          deviceId: value || null,
+                        },
+                      })
+                    }
+                  />
+                </div>
+
                 <div className="RecordingDialog__section">
                   <h3 className="RecordingDialog__section-title">
                     <span>{t("recording.cameraSize" as any)}</span>

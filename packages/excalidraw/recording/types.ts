@@ -38,6 +38,7 @@ export interface RecordingConfig {
   padding: number;
   camera: {
     enabled: boolean;
+    deviceId: string | null;
     size: number;
     zoom: number;
   };
@@ -66,7 +67,7 @@ export const DEFAULT_RECORDING_CONFIG: RecordingConfig = {
   background: "cotton-candy",
   borderRadius: 16,
   padding: 4,
-  camera: { enabled: true, size: 180, zoom: 1 },
+  camera: { enabled: true, deviceId: null, size: 180, zoom: 1 },
   cursor: { enabled: false, color: "#FF4444" },
   microphone: null,
 };

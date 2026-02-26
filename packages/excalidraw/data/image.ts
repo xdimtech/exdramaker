@@ -43,7 +43,7 @@ export const encodePngMetadata = async ({
   // insert metadata before last chunk (iEND)
   chunks.splice(-1, 0, metadataChunk);
 
-  return new Blob([encodePng(chunks) as Uint8Array], { type: MIME_TYPES.png });
+  return new Blob([new Uint8Array(encodePng(chunks) as Uint8Array)], { type: MIME_TYPES.png });
 };
 
 export const decodePngMetadata = async (blob: Blob) => {

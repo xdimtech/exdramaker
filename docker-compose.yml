@@ -1,23 +1,35 @@
 services:
-  excalidraw:
+  # 开发环境
+  dev:
     build:
       context: .
       args:
         - NODE_ENV=development
-    container_name: excalidraw
     ports:
       - "3000:80"
     restart: on-failure
     stdin_open: true
-    healthcheck:
-      disable: true
-    environment:
-      - NODE_ENV=development
     volumes:
       - ./:/opt/node_app/app:delegated
       - ./package.json:/opt/node_app/package.json
       - ./yarn.lock:/opt/node_app/yarn.lock
       - notused:/opt/node_app/app/node_modules
+
+  # 生产环境
+  prod:
+    build:
+      context: .
+      args:
+        - NODE_ENV=production
+    image: exdramaker:prod
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   notused:

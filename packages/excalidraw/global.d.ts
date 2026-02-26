@@ -8,6 +8,9 @@ interface Window {
   gtag: Function;
   sa_event: Function;
   fathom: { trackEvent: Function };
+  // Test hook for development/testing
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  h: any;
 }
 
 interface CanvasRenderingContext2D {

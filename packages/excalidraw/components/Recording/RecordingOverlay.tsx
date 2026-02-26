@@ -158,8 +158,16 @@ export const RecordingOverlay = ({
     }
 
     let isMounted = true;
+    const videoConstraints: MediaTrackConstraints = {
+      facingMode: "user",
+    };
+    // 如果指定了 deviceId，使用它
+    if (config.camera.deviceId) {
+      videoConstraints.deviceId = { exact: config.camera.deviceId };
+    }
+
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: false })
+      .getUserMedia({ video: videoConstraints, audio: false })
       .then((stream) => {
         if (!isMounted) {
           stream.getTracks().forEach((track) => track.stop());
@@ -182,7 +190,7 @@ export const RecordingOverlay = ({
         cameraStreamRef.current = null;
       }
     };
-  }, [isOpen, config.camera.enabled]);
+  }, [isOpen, config.camera.enabled, config.camera.deviceId]);
 
   const cameraSize = useMemo(() => {
     const baseSize = config.camera.size;
