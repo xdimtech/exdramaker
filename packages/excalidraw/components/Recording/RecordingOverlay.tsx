@@ -159,7 +159,11 @@ export const RecordingOverlay = ({
 
     // 检查浏览器是否支持 mediaDevices API
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.warn("MediaDevices API not supported");
+      console.warn("MediaDevices API not supported", {
+        hasNavigator: typeof navigator !== "undefined",
+        hasMediaDevices: !!(navigator as any).mediaDevices,
+        userAgent: navigator.userAgent,
+      });
       return;
     }
 

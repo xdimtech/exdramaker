@@ -61,12 +61,19 @@ export class CanvasCompositor {
 
     return new Promise((resolve, reject) => {
       const img = new Image();
+      img.crossOrigin = "anonymous"; // 尝试解决 CORS 问题
       img.onload = () => {
         this.wallpaperImage = img;
         resolve();
       };
-      img.onerror = () => {
-        console.error(`Failed to load wallpaper: ${wallpaper.src}`);
+      img.onerror = (e) => {
+        console.error(`Failed to load wallpaper: ${wallpaper.src}`, e);
+        // 如果是 CORS 错误，尝试不使用 crossOrigin 重试
+        if (img.crossOrigin !== "") {
+          img.crossOrigin = "";
+          img.src = wallpaper.src;
+          return;
+        }
         resolve(); // 继续执行，使用降级背景
       };
       img.src = wallpaper.src;

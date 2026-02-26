@@ -78,7 +78,7 @@ start_local_server() {
 
     # 启动应用
     cd excalidraw-app
-    pm2 start npx --name exdramaker -- -y http-server@latest -a 0.0.0.0 -p 5001 ./build
+    pm2 start npx --name exdramaker -- -y http-server@latest -a 0.0.0.0 -p 5001 --cors ./build
     pm2 save
 
     log_info "本地服务器已启动！"
