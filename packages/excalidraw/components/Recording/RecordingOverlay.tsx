@@ -158,12 +158,19 @@ export const RecordingOverlay = ({
     }
 
     // 检查浏览器是否支持 mediaDevices API
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.warn("MediaDevices API not supported", {
+    if (typeof navigator === "undefined" || !navigator.mediaDevices) {
+      console.warn("MediaDevices API not available - navigator or mediaDevices is undefined", {
         hasNavigator: typeof navigator !== "undefined",
-        hasMediaDevices: !!(navigator as any).mediaDevices,
-        userAgent: navigator.userAgent,
+        hasMediaDevices: !!(navigator as any)?.mediaDevices,
+        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "n/a",
+        href: typeof window !== "undefined" ? window.location.href : "n/a",
+        protocol: typeof window !== "undefined" ? window.location.protocol : "n/a",
       });
+      return;
+    }
+
+    if (!navigator.mediaDevices.getUserMedia) {
+      console.warn("MediaDevices.getUserMedia is not a function");
       return;
     }
 
