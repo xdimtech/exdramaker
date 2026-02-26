@@ -157,6 +157,12 @@ export const RecordingOverlay = ({
       return;
     }
 
+    // 检查浏览器是否支持 mediaDevices API
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.warn("MediaDevices API not supported");
+      return;
+    }
+
     let isMounted = true;
     const videoConstraints: MediaTrackConstraints = {
       facingMode: "user",

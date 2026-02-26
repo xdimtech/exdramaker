@@ -62,14 +62,29 @@ export class RecordingEngine {
   }
 
   async initialize(): Promise<void> {
+    // 检查浏览器环境
+    if (typeof navigator === "undefined" || !navigator.mediaDevices) {
+      throw new Error("浏览器环境不支持媒体设备");
+    }
+
     // 1. 加载壁纸
     await this.compositor.loadWallpaper(this.config.background);
 
     // 2. 请求摄像头权限（如果启用）
     if (this.config.camera.enabled) {
       try {
+        const videoConstraints: MediaStreamConstraints["video"] = {
+          width: 640,
+          height: 480,
+        };
+        // 如果指定了 deviceId，使用它
+        if (this.config.camera.deviceId) {
+          (videoConstraints as MediaTrackConstraints).deviceId = {
+            exact: this.config.camera.deviceId,
+          };
+        }
         this.cameraStream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 640, height: 480 },
+          video: videoConstraints,
           audio: false,
         });
         this.compositor.setCameraStream(this.cameraStream);
