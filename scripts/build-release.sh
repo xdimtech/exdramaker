@@ -93,7 +93,9 @@ main() {
     check_node
 
     if [ $# -eq 0 ]; then
-        show_help
+        log_info "未指定选项，默认执行本地构建..."
+        build_local
+        start_local_server
         exit 0
     fi
 
