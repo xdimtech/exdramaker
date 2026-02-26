@@ -62,12 +62,27 @@ start_compose_prod() {
     log_info "访问 http://localhost:8080"
 }
 
-# 本地启动生产服务器
+# 本地启动生产服务器（使用 PM2）
 start_local_server() {
-    log_info "启动本地生产服务器..."
-    yarn start:production &
+    log_info "启动本地生产服务器（PM2）..."
+
+    # 检查 PM2 是否安装
+    if ! command -v pm2 &> /dev/null; then
+        log_warn "PM2 未安装，正在安装..."
+        npm install -g pm2
+    fi
+
+    # 停止已有进程
+    pm2 stop exdramaker 2>/dev/null || true
+    pm2 delete exdramaker 2>/dev/null || true
+
+    # 启动应用
+    cd excalidraw-app
+    pm2 start npx --name exdramaker -- -y http-server@latest -a 0.0.0.0 -p 5001 ./build
+    pm2 save
+
     log_info "本地服务器已启动！"
-    log_info "访问 http://localhost:5001"
+    log_info "访问 http://localhost:5001 或通过域名访问"
 }
 
 # 显示帮助

@@ -8,7 +8,7 @@ import {
   sessionAtom,
   userAtom,
 } from "./authAtoms";
-import { supabase } from "./supabaseClient";
+import { supabase, isSupabaseConfigured } from "./supabaseClient";
 
 export const useAuthInit = () => {
   const setUser = useSetAtom(userAtom);
@@ -16,6 +16,12 @@ export const useAuthInit = () => {
   const setLoading = useSetAtom(authLoadingAtom);
 
   useEffect(() => {
+    // 如果没有配置 Supabase，跳过认证初始化
+    if (!isSupabaseConfigured || !supabase) {
+      setLoading(false);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -39,6 +45,9 @@ export const useSignIn = () => {
 
   const signInWithEmail = useCallback(
     async (email: string, password: string) => {
+      if (!supabase) {
+        throw new Error("Supabase is not configured");
+      }
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -59,6 +68,9 @@ export const useSignUp = () => {
 
   const signUpWithEmail = useCallback(
     async (email: string, password: string) => {
+      if (!supabase) {
+        throw new Error("Supabase is not configured");
+      }
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) {
         throw error;
@@ -73,6 +85,9 @@ export const useSignUp = () => {
 
 export const useSignInWithGoogle = () => {
   const signInWithGoogle = useCallback(async () => {
+    if (!supabase) {
+      throw new Error("Supabase is not configured");
+    }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -89,6 +104,9 @@ export const useSignInWithGoogle = () => {
 
 export const useSignOut = () => {
   const signOut = useCallback(async () => {
+    if (!supabase) {
+      throw new Error("Supabase is not configured");
+    }
     const { error } = await supabase.auth.signOut();
     if (error) {
       throw error;
