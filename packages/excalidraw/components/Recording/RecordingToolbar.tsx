@@ -496,7 +496,7 @@ ${slides
         </div>
       )}
       {/* Debug Info Panel (controlled by Visual Debug) */}
-      {window.visualDebug && isOpen && slides.length > 0 && (
+      {window.visualDebug && slides.length > 0 && (
         <div
           style={{
             position: "fixed",
