@@ -36,6 +36,7 @@ const formatDuration = (totalSeconds: number): string => {
 export const RecordingToolbar = () => {
   const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  const [showDebugInfo, setShowDebugInfo] = useState(true);
   const dragOffsetRef = useRef<{ x: number; y: number } | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const setAppState = useExcalidrawSetAppState();
@@ -496,7 +497,7 @@ ${slides
         </div>
       )}
       {/* Debug Info Panel (controlled by Visual Debug) */}
-      {window.visualDebug && slides.length > 0 && (
+      {window.visualDebug && showDebugInfo && slides.length > 0 && (
         <div
           style={{
             position: "fixed",
@@ -518,23 +519,41 @@ ${slides
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              gap: "8px",
             }}
           >
             <span>Debug Info</span>
-            <button
-              onClick={handleCopyDebug}
-              style={{
-                background: "#444",
-                color: "#fff",
-                border: "none",
-                padding: "2px 8px",
-                fontSize: "10px",
-                cursor: "pointer",
-                borderRadius: "3px",
-              }}
-            >
-              Copy
-            </button>
+            <div style={{ display: "flex", gap: "4px" }}>
+              <button
+                onClick={handleCopyDebug}
+                style={{
+                  background: "#444",
+                  color: "#fff",
+                  border: "none",
+                  padding: "2px 8px",
+                  fontSize: "10px",
+                  cursor: "pointer",
+                  borderRadius: "3px",
+                }}
+              >
+                Copy
+              </button>
+              <button
+                onClick={() => setShowDebugInfo(false)}
+                style={{
+                  background: "#d33",
+                  color: "#fff",
+                  border: "none",
+                  padding: "2px 8px",
+                  fontSize: "10px",
+                  cursor: "pointer",
+                  borderRadius: "3px",
+                }}
+                title="Close Debug Info"
+              >
+                ✕
+              </button>
+            </div>
           </div>
           <div>Zoom: {zoom.toFixed(2)}</div>
           <div>
