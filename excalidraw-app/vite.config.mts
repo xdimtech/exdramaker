@@ -2,7 +2,6 @@ import path from "path";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import svgrPlugin from "vite-plugin-svgr";
-import { ViteEjsPlugin } from "vite-plugin-ejs";
 import { VitePWA } from "vite-plugin-pwa";
 import checker from "vite-plugin-checker";
 import { createHtmlPlugin } from "vite-plugin-html";
@@ -139,13 +138,18 @@ export default defineConfig(({ mode }) => {
         },
       }),
       svgrPlugin(),
-      ViteEjsPlugin({
-        PROD: mode === "production",
-        VITE_APP_DEV_DISABLE_LIVE_RELOAD: envVars.VITE_APP_DEV_DISABLE_LIVE_RELOAD,
-        VITE_APP_POSTHOG_ENABLED: envVars.VITE_APP_POSTHOG_ENABLED || "false",
-        VITE_APP_POSTHOG_KEY: envVars.VITE_APP_POSTHOG_KEY || "",
-        VITE_APP_POSTHOG_HOST: envVars.VITE_APP_POSTHOG_HOST || "https://app.posthog.com",
-        VITE_APP_POSTHOG_DEBUG: envVars.VITE_APP_POSTHOG_DEBUG || "false",
+      createHtmlPlugin({
+        minify: true,
+        inject: {
+          data: {
+            PROD: mode === "production",
+            VITE_APP_DEV_DISABLE_LIVE_RELOAD: envVars.VITE_APP_DEV_DISABLE_LIVE_RELOAD,
+            VITE_APP_POSTHOG_ENABLED: envVars.VITE_APP_POSTHOG_ENABLED || "false",
+            VITE_APP_POSTHOG_KEY: envVars.VITE_APP_POSTHOG_KEY || "",
+            VITE_APP_POSTHOG_HOST: envVars.VITE_APP_POSTHOG_HOST || "https://app.posthog.com",
+            VITE_APP_POSTHOG_DEBUG: envVars.VITE_APP_POSTHOG_DEBUG || "false",
+          },
+        },
       }),
       VitePWA({
         registerType: "autoUpdate",
@@ -303,9 +307,6 @@ export default defineConfig(({ mode }) => {
             },
           ],
         },
-      }),
-      createHtmlPlugin({
-        minify: true,
       }),
     ],
     publicDir: "../public",
