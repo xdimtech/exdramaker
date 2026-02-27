@@ -1,0 +1,44 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs (except the final build)
+packages/*/dist
+excalidraw-app/.vite
+
+# Development files
+.vscode
+.idea
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test files
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+**/tests
+**/__tests__
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Scripts (except build scripts)
+scripts/deploy*.sh
+
+# Git
+.git
+.gitignore
+
+# Environment files (will be set in Vercel dashboard)
+.env.local
+.env.development
