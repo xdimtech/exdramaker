@@ -35,3 +35,4 @@ coverage/
 *.tgz
 .cache/
 .playwright-mcp
+.vercel
