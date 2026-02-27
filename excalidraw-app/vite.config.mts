@@ -139,7 +139,14 @@ export default defineConfig(({ mode }) => {
         },
       }),
       svgrPlugin(),
-      ViteEjsPlugin(),
+      ViteEjsPlugin({
+        PROD: mode === "production",
+        VITE_APP_DEV_DISABLE_LIVE_RELOAD: envVars.VITE_APP_DEV_DISABLE_LIVE_RELOAD,
+        VITE_APP_POSTHOG_ENABLED: envVars.VITE_APP_POSTHOG_ENABLED || "false",
+        VITE_APP_POSTHOG_KEY: envVars.VITE_APP_POSTHOG_KEY || "",
+        VITE_APP_POSTHOG_HOST: envVars.VITE_APP_POSTHOG_HOST || "https://app.posthog.com",
+        VITE_APP_POSTHOG_DEBUG: envVars.VITE_APP_POSTHOG_DEBUG || "false",
+      }),
       VitePWA({
         registerType: "autoUpdate",
         devOptions: {
