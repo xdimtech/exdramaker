@@ -10,10 +10,10 @@ import type { ExcalidrawElement } from "@excalidraw/element/types";
 
 import { cleanAppStateForExport, clearAppStateForDatabase } from "../appState";
 
+import { editorJotaiStore, slidesAtom } from "../editor-jotai";
+
 import { isImageFileHandle, loadFromBlob } from "./blob";
 import { fileOpen, fileSave } from "./filesystem";
-
-import { editorJotaiStore, slidesAtom } from "../editor-jotai";
 
 import type { AppState, BinaryFiles, LibraryItems, Slide } from "../types";
 import type {

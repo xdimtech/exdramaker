@@ -8,11 +8,16 @@
   background: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(0, 0, 0, 0.06);
   cursor: grab;
   user-select: none;
+  -webkit-user-select: none;
   touch-action: none;
+  // Ensure visibility on mobile
+  min-width: fit-content;
+  width: auto;
 
   &--dragging {
     cursor: grabbing;
@@ -182,6 +187,48 @@
 
     &:hover {
       background: #111;
+    }
+  }
+
+  // ── Mobile responsive ────────────────────────────────────────────────────
+
+  @media (max-width: 768px) {
+    gap: 6px;
+    padding: 6px 8px;
+    max-width: calc(100vw - 16px);
+    overflow-x: auto;
+
+    &__icon-button {
+      width: 32px;
+      height: 32px;
+
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    &__record-button,
+    &__begin-button {
+      padding: 6px 12px;
+      font-size: 12px;
+      gap: 6px;
+    }
+
+    &__cancel-button,
+    &__action-button {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    &__stop-button {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    &__timer {
+      font-size: 12px;
+      padding: 0 2px;
     }
   }
 }

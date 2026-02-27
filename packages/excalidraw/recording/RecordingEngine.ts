@@ -108,7 +108,8 @@ export class RecordingEngine {
           if (this.audioContext.state === "suspended") {
             await this.audioContext.resume().catch(() => undefined);
           }
-          this.audioDestination = this.audioContext.createMediaStreamDestination();
+          this.audioDestination =
+            this.audioContext.createMediaStreamDestination();
           this.microphoneSourceNode = this.audioContext.createMediaStreamSource(
             this.microphoneStream,
           );

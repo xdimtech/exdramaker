@@ -11,6 +11,7 @@ import {
 import { recordingConfigAtom } from "../recording/recordingState";
 import { RECORDING_RESOLUTIONS } from "../recording/types";
 import { t } from "../i18n";
+
 import { CloseIcon, PlusIcon, TrashIcon } from "./icons";
 import { Island } from "./Island";
 
@@ -49,7 +50,9 @@ export const SlidesPanel = ({
   };
 
   const switchToSlide = (slideId: string) => {
-    if (!app || !activeSlideId) return;
+    if (!app || !activeSlideId) {
+      return;
+    }
 
     // Save current elements to the current slide
     const currentElements = app.getSceneElements();

@@ -1,3 +1,5 @@
+import type { ExcalidrawElement } from "@excalidraw/element/types";
+
 import {
   useSetAtom,
   useAtom,
@@ -7,8 +9,8 @@ import {
 } from "../editor-jotai";
 import { recordingConfigAtom } from "../recording/recordingState";
 import { RECORDING_RESOLUTIONS } from "../recording/types";
+
 import type { Slide } from "../types";
-import type { ExcalidrawElement } from "@excalidraw/element/types";
 
 const generateId = () =>
   `slide-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -98,7 +100,9 @@ export const useSlides = () => {
   };
 
   const saveCurrentElements = (elements: ExcalidrawElement[]) => {
-    if (!activeSlideId) return;
+    if (!activeSlideId) {
+      return;
+    }
 
     setSlides((prevSlides) =>
       prevSlides.map((slide) =>
@@ -115,7 +119,9 @@ export const useSlides = () => {
   };
 
   const deleteSlide = (slideId: string) => {
-    if (slides.length <= 1) return;
+    if (slides.length <= 1) {
+      return;
+    }
 
     const newSlides = slides.filter((s) => s.id !== slideId);
     setSlides(newSlides);

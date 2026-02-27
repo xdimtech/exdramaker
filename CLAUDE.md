@@ -99,6 +99,53 @@ Keyboard.keyDown("Delete");
 
 ## Code Conventions
 
+### ESLint Rules
+
+**IMPORTANT: Always run `yarn fix` before committing to auto-fix formatting and linting issues.**
+
+#### Import Order
+
+Imports must be organized in groups with blank lines between them:
+
+1. External dependencies (npm packages)
+2. Type imports from external dependencies
+3. Internal absolute imports (from `@excalidraw/*`)
+4. Type imports from internal packages
+5. Relative imports (`../`, `./`)
+6. Type imports from relative paths
+7. Style imports (`.scss`, `.css`)
+
+Example:
+
+```typescript
+import { createClient } from "@supabase/supabase-js";
+import React from "react";
+
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+import { isLinearElement } from "@excalidraw/element";
+
+import type { ExcalidrawElement } from "../types";
+
+import { generateId } from "../utils";
+
+import "./styles.scss";
+```
+
+#### Type-Only Imports
+
+Use `import type` for imports that are only used as types (not as runtime values):
+
+```typescript
+// ✅ GOOD - Type-only import
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+// ❌ BAD - Regular import for type-only usage
+import { SupabaseClient } from "@supabase/supabase-js";
+```
+
+This rule is enforced by `@typescript-eslint/consistent-type-imports`.
+
 ### TypeScript
 
 - Prefer implementations without allocation where possible

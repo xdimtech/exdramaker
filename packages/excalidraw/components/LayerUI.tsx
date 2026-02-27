@@ -651,15 +651,11 @@ const LayerUI = ({
             )}
           </div>
           {renderSidebars()}
-          <RecordingToolbar />
-          <RecordingOverlay
-            elements={elements}
-            appState={appState}
-            files={files}
-          />
-          <Teleprompter />
         </>
       )}
+      <RecordingToolbar />
+      <RecordingOverlay elements={elements} appState={appState} files={files} />
+      <Teleprompter />
     </>
   );
 

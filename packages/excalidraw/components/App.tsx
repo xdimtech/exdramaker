@@ -428,6 +428,8 @@ import { EraserTrail } from "../eraser";
 
 import { getShortcutKey } from "../shortcut";
 
+import { activeSlideIdAtom } from "../editor-jotai";
+
 import ConvertElementTypePopup, {
   getConversionTypeFromElements,
   convertElementTypePopupAtom,
@@ -442,7 +444,6 @@ import FollowMode from "./FollowMode/FollowMode";
 import LayerUI from "./LayerUI";
 import { CanvasSlides } from "./CanvasSlides";
 import SlideNavigator from "./SlideNavigator";
-import { activeSlideIdAtom } from "../editor-jotai";
 import { ElementCanvasButton } from "./MagicButton";
 import { SVGLayer } from "./SVGLayer";
 import { searchItemInFocusAtom } from "./SearchMenu";

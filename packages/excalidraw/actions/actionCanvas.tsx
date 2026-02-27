@@ -47,9 +47,9 @@ import { centerScrollOn } from "../scene/scroll";
 import { getStateForZoom } from "../scene/zoom";
 import { getShortcutKey } from "../shortcut";
 
-import { register } from "./register";
-
 import { editorJotaiStore, slidesAtom } from "../editor-jotai";
+
+import { register } from "./register";
 
 import type { AppState, Offsets } from "../types";
 

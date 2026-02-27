@@ -1,8 +1,10 @@
 import React from "react";
 
 import { useSlides } from "../hooks/useSlides";
-import { PlusIcon } from "./icons";
+
 import { t } from "../i18n";
+
+import { PlusIcon } from "./icons";
 
 import "./SlideTrigger.scss";
 

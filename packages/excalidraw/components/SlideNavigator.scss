@@ -13,6 +13,21 @@
   border-radius: 8px 0 0 8px;
   box-shadow: var(--shadow-md, 0 2px 8px rgba(0, 0, 0, 0.1));
 
+  // Mobile: horizontal layout at bottom
+  @media (max-width: 768px) {
+    right: auto;
+    top: auto;
+    bottom: 70px; // Above app toolbar
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+    max-height: none;
+    max-width: calc(100vw - 32px);
+    padding: 6px 8px;
+    border-radius: 12px;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.15);
+  }
+
   &__list {
     display: flex;
     flex-direction: column;
@@ -21,7 +36,31 @@
     max-height: calc(66vh - 48px);
     padding-right: 4px;
 
-    // Custom scrollbar styling
+    @media (max-width: 768px) {
+      flex-direction: row;
+      overflow-y: visible;
+      overflow-x: auto;
+      max-height: none;
+      max-width: 100%;
+      padding-right: 0;
+      padding-bottom: 4px;
+
+      // Hide scrollbar on mobile but keep functionality
+      &::-webkit-scrollbar {
+        height: 3px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: var(--border-color, #d0d0d0);
+        border-radius: 2px;
+      }
+    }
+
+    // Custom scrollbar styling (desktop)
     &::-webkit-scrollbar {
       width: 4px;
     }
@@ -53,6 +92,12 @@
     pointer-events: auto;
     flex-shrink: 0;
 
+    @media (max-width: 768px) {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+    }
+
     &:hover {
       border-color: var(--color-primary, #6965db);
       color: var(--color-primary, #6965db);
@@ -80,6 +125,13 @@
       font-size: 18px;
       font-weight: 400;
 
+      @media (max-width: 768px) {
+        width: 36px;
+        height: 36px;
+        margin-top: 0;
+        margin-left: 6px;
+      }
+
       &:hover {
         border-color: var(--color-primary, #6965db);
         color: var(--color-primary, #6965db);
@@ -94,6 +146,13 @@
       background: var(--island-bg-color, #fff);
       color: #ef4444;
       font-size: 14px;
+
+      @media (max-width: 768px) {
+        width: 36px;
+        height: 36px;
+        margin-top: 0;
+        margin-left: 6px;
+      }
 
       &:hover {
         border-color: #ef4444;

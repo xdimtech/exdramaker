@@ -113,8 +113,13 @@ export const RecordingOverlay = ({
     }
 
     setRecordingArea((prev) => {
-      const maxWidth = canvasBounds.width * 0.8;
-      const maxHeight = canvasBounds.height * 0.8;
+      // On mobile, use full width; on desktop, use 80%
+      const isMobile = window.innerWidth <= 768;
+      const widthRatio = isMobile ? 1.0 : 0.8;
+      const heightRatio = isMobile ? 1.0 : 0.8;
+
+      const maxWidth = canvasBounds.width * widthRatio;
+      const maxHeight = canvasBounds.height * heightRatio;
       let width = prev?.width ?? maxWidth;
       let height = width / aspectRatio;
 
@@ -159,13 +164,18 @@ export const RecordingOverlay = ({
 
     // 检查浏览器是否支持 mediaDevices API
     if (typeof navigator === "undefined" || !navigator.mediaDevices) {
-      console.warn("MediaDevices API not available - navigator or mediaDevices is undefined", {
-        hasNavigator: typeof navigator !== "undefined",
-        hasMediaDevices: !!(navigator as any)?.mediaDevices,
-        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "n/a",
-        href: typeof window !== "undefined" ? window.location.href : "n/a",
-        protocol: typeof window !== "undefined" ? window.location.protocol : "n/a",
-      });
+      console.warn(
+        "MediaDevices API not available - navigator or mediaDevices is undefined",
+        {
+          hasNavigator: typeof navigator !== "undefined",
+          hasMediaDevices: !!(navigator as any)?.mediaDevices,
+          userAgent:
+            typeof navigator !== "undefined" ? navigator.userAgent : "n/a",
+          href: typeof window !== "undefined" ? window.location.href : "n/a",
+          protocol:
+            typeof window !== "undefined" ? window.location.protocol : "n/a",
+        },
+      );
       return;
     }
 

@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef } from "react";
 
+import { atom, useAtom } from "../../editor-jotai";
 import { useTunnels } from "../../context/tunnels";
-import { atom } from "../../editor-jotai";
 
 export const withInternalFallback = <P,>(
   componentName: string,
@@ -16,17 +16,12 @@ export const withInternalFallback = <P,>(
   > = (props) => {
     const tunnels = useTunnels();
 
-    // If tunnels context is not available (e.g., in tests or during SSR),
-    // render the component directly without the fallback mechanism
-    if (!tunnels) {
-      return <Component {...props} />;
-    }
+    // Use scoped useAtom if available, otherwise use global
+    const useAtomHook = tunnels?.tunnelsJotai.useAtom || useAtom;
 
-    const {
-      tunnelsJotai: { useAtom },
-    } = tunnels;
-    // for rerenders
-    const [, setCounter] = useAtom(renderAtom);
+    // for rerenders - always call this hook
+    const [, setCounter] = useAtomHook(renderAtom);
+
     // for initial & subsequent renders. Tracked as component state
     // due to excalidraw multi-instance scanerios.
     const metaRef = useRef({

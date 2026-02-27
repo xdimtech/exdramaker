@@ -13,6 +13,14 @@
     background: rgba(255, 255, 255, 0.02);
     cursor: move;
     touch-action: none;
+
+    @media (max-width: 768px) {
+      // Thinner border on mobile to maximize recording area
+      border-width: 1px;
+      border-radius: 12px;
+      // Lighter overlay on mobile
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.15);
+    }
   }
 
   &--locked {
@@ -38,6 +46,11 @@
     color: #fff;
     font-size: 12px;
     pointer-events: none;
+
+    @media (max-width: 768px) {
+      font-size: 11px;
+      padding: 5px 10px;
+    }
   }
 
   &__handle {
@@ -48,30 +61,58 @@
     background: #3bb54a;
     border: 2px solid #ffffff;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+
+    @media (max-width: 768px) {
+      // Larger touch targets on mobile
+      width: 16px;
+      height: 16px;
+      border-radius: 5px;
+      border-width: 2.5px;
+    }
   }
 
   &__handle[data-handle="nw"] {
     left: -6px;
     top: -6px;
     cursor: nwse-resize;
+
+    @media (max-width: 768px) {
+      left: -8px;
+      top: -8px;
+    }
   }
 
   &__handle[data-handle="ne"] {
     right: -6px;
     top: -6px;
     cursor: nesw-resize;
+
+    @media (max-width: 768px) {
+      right: -8px;
+      top: -8px;
+    }
   }
 
   &__handle[data-handle="sw"] {
     left: -6px;
     bottom: -6px;
     cursor: nesw-resize;
+
+    @media (max-width: 768px) {
+      left: -8px;
+      bottom: -8px;
+    }
   }
 
   &__handle[data-handle="se"] {
     right: -6px;
     bottom: -6px;
     cursor: nwse-resize;
+
+    @media (max-width: 768px) {
+      right: -8px;
+      bottom: -8px;
+    }
   }
 
   // ── REC badge ──────────────────────────────────────────────────────────────
@@ -94,6 +135,15 @@
     backdrop-filter: blur(4px);
     z-index: 2;
 
+    @media (max-width: 768px) {
+      top: 8px;
+      right: 8px;
+      padding: 3px 8px 3px 6px;
+      font-size: 10px;
+      letter-spacing: 1.2px;
+      border-radius: 5px;
+    }
+
     &--breathing {
       animation: recBadgeBreathe 1.6s ease-in-out infinite;
     }
@@ -109,6 +159,11 @@
     border-radius: 50%;
     background: #ffffff;
     flex-shrink: 0;
+
+    @media (max-width: 768px) {
+      width: 5px;
+      height: 5px;
+    }
 
     .RecordingOverlay__rec-badge--breathing & {
       animation: recDotPulse 1.6s ease-in-out infinite;
@@ -147,6 +202,10 @@
     cursor: grab;
     touch-action: none;
 
+    @media (max-width: 768px) {
+      border-width: 2.5px;
+    }
+
     video {
       width: 100%;
       height: 100%;
@@ -170,11 +229,22 @@
     padding: 12px 16px;
     border-radius: 16px;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+
+    @media (max-width: 768px) {
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
   }
 
   &__error {
     font-size: 12px;
     color: var(--color-danger);
+
+    @media (max-width: 768px) {
+      font-size: 11px;
+    }
   }
 
   &__cancel {
@@ -183,5 +253,9 @@
     color: var(--color-text-secondary);
     font-size: 13px;
     cursor: pointer;
+
+    @media (max-width: 768px) {
+      font-size: 12px;
+    }
   }
 }

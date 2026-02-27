@@ -6,6 +6,12 @@
     padding-bottom: 12px;
     border-bottom: 1px solid var(--color-gray-20);
     flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      gap: 6px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+    }
   }
 
   &__category {
@@ -17,6 +23,11 @@
     color: var(--color-text-secondary);
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    @media (max-width: 768px) {
+      padding: 5px 12px;
+      font-size: 11px;
+    }
 
     &:hover {
       transform: translateY(-1px);
@@ -42,6 +53,12 @@
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 
+    @media (max-width: 768px) {
+      padding: 8px 10px;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
     &:hover {
       transform: translateY(-1px);
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
@@ -59,6 +76,13 @@
     justify-items: stretch;
     align-items: start;
     transition: opacity 0.2s ease, transform 0.2s ease;
+
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      max-height: 240px;
+      padding: 2px;
+    }
   }
 
   &__item {
@@ -73,6 +97,10 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
     background: #ffffff;
+
+    @media (max-width: 768px) {
+      border-radius: 10px;
+    }
 
     &::before {
       content: "";
@@ -107,6 +135,14 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+
+      @media (max-width: 768px) {
+        right: 6px;
+        bottom: 6px;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+      }
     }
 
     img {
@@ -122,13 +158,17 @@
   &__none-icon {
     width: 100%;
     height: 100%;
-    background-image:
-      linear-gradient(45deg, #ccc 25%, transparent 25%),
+    background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
       linear-gradient(-45deg, #ccc 25%, transparent 25%),
       linear-gradient(45deg, transparent 75%, #ccc 75%),
       linear-gradient(-45deg, transparent 75%, #ccc 75%);
     background-size: 16px 16px;
     background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
     background-color: #f0f0f0;
+
+    @media (max-width: 768px) {
+      background-size: 12px 12px;
+      background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
+    }
   }
 }

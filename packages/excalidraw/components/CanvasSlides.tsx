@@ -1,13 +1,15 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 
+import type { ExcalidrawElement } from "@excalidraw/element/types";
+
 import { useAtomValue, useSetAtom } from "../editor-jotai";
 import {
   activeSlideIdAtom,
   slidesAtom,
   scrollTargetAtom,
 } from "../editor-jotai";
+
 import type { Slide } from "../types";
-import type { ExcalidrawElement } from "@excalidraw/element/types";
 
 import "./CanvasSlides.scss";
 
@@ -131,7 +133,9 @@ export const CanvasSlides: React.FC<CanvasSlidesProps> = ({
       elements: readonly ExcalidrawElement[],
       onUpdate: (els: ExcalidrawElement[]) => void,
     ) => {
-      if (!slides.length) return;
+      if (!slides.length) {
+        return;
+      }
 
       const slideIdMap = new Map<string, string>();
       let hasChanges = false;
@@ -279,7 +283,9 @@ export const CanvasSlides: React.FC<CanvasSlidesProps> = ({
   const handlePointerDown = useCallback(
     (e: React.PointerEvent, slideId: string) => {
       const slide = slides.find((s) => s.id === slideId);
-      if (!slide) return;
+      if (!slide) {
+        return;
+      }
 
       e.stopPropagation();
       setActiveSlideIdAtom(slideId);
@@ -314,7 +320,9 @@ export const CanvasSlides: React.FC<CanvasSlidesProps> = ({
     (e: React.PointerEvent, slideId: string, direction: string) => {
       e.stopPropagation();
       const slide = slides.find((s) => s.id === slideId);
-      if (!slide) return;
+      if (!slide) {
+        return;
+      }
 
       setActiveSlideIdAtom(slideId);
 

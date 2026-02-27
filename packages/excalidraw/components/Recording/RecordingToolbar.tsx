@@ -34,7 +34,7 @@ const formatDuration = (totalSeconds: number): string => {
 };
 
 export const RecordingToolbar = () => {
-  const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 140 });
+  const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const dragOffsetRef = useRef<{ x: number; y: number } | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -90,9 +90,14 @@ export const RecordingToolbar = () => {
       const configHeight = resolution.height;
 
       // Calculate expected recording area size based on window
+      // On mobile, use 100% width; on desktop, use 80%
+      const isMobile = window.innerWidth <= 768;
+      const widthRatio = isMobile ? 1.0 : 0.8;
+      const heightRatio = isMobile ? 1.0 : 0.8;
+
       const aspectRatio = configWidth / configHeight;
-      const maxWidth = window.innerWidth * 0.8;
-      const maxHeight = window.innerHeight * 0.8;
+      const maxWidth = window.innerWidth * widthRatio;
+      const maxHeight = window.innerHeight * heightRatio;
       let areaW = maxWidth;
       let areaH = areaW / aspectRatio;
       if (areaH > maxHeight) {
@@ -104,6 +109,14 @@ export const RecordingToolbar = () => {
       console.log(
         "[RecordingToolbar useEffect] status: pre-recording, zoom from config:",
         zoom,
+        "isMobile:",
+        isMobile,
+        "widthRatio:",
+        widthRatio,
+        "areaW:",
+        areaW,
+        "firstSlide.width:",
+        firstSlide.width,
       );
 
       // Set zoom and scroll to 0
@@ -147,14 +160,83 @@ export const RecordingToolbar = () => {
   }, [status, recordingAreaPosition, slides]);
 
   useEffect(() => {
-    const toolbarWidth = toolbarRef.current?.offsetWidth ?? 240;
-    const toolbarHeight = toolbarRef.current?.offsetHeight ?? 48;
-    const initialX = window.innerWidth - toolbarWidth - 24;
-    const initialY = window.innerHeight - toolbarHeight - 24;
-    setToolbarPosition((prev) => ({
-      x: prev.x || Math.max(24, initialX),
-      y: prev.y || Math.max(24, initialY),
-    }));
+    // Use setTimeout to ensure DOM is fully rendered
+    const timer = setTimeout(() => {
+      const toolbarWidth = toolbarRef.current?.offsetWidth ?? 240;
+      const toolbarHeight = toolbarRef.current?.offsetHeight ?? 48;
+      const isMobile = window.innerWidth <= 768;
+
+      console.log("[RecordingToolbar] Initializing position:", {
+        toolbarWidth,
+        toolbarHeight,
+        windowWidth: window.innerWidth,
+        windowHeight: window.innerHeight,
+        isMobile,
+      });
+
+      // Center horizontally
+      const initialX = (window.innerWidth - toolbarWidth) / 2;
+      // Mobile: top, Desktop: bottom
+      const initialY = isMobile
+        ? 24 // Top on mobile
+        : window.innerHeight - toolbarHeight - 24; // Bottom on desktop
+
+      console.log("[RecordingToolbar] Calculated position:", {
+        initialX,
+        initialY,
+      });
+
+      setToolbarPosition({
+        x: Math.max(8, initialX),
+        y: Math.max(8, initialY),
+      });
+    }, 100);
+
+    // Handle window resize (important for mobile when address bar shows/hides)
+    const handleResize = () => {
+      const toolbarWidth = toolbarRef.current?.offsetWidth ?? 240;
+      const toolbarHeight = toolbarRef.current?.offsetHeight ?? 48;
+      const isMobile = window.innerWidth <= 768;
+
+      setToolbarPosition((prev) => {
+        // Re-center if still near center (horizontally)
+        const isNearCenter =
+          Math.abs(prev.x - (window.innerWidth - toolbarWidth) / 2) < 50;
+        const isNearTop = prev.y < 100;
+        const isNearBottom = prev.y > window.innerHeight - toolbarHeight - 100;
+
+        // If near center and appropriate vertical position for current mode
+        if (
+          isNearCenter &&
+          ((isMobile && isNearTop) || (!isMobile && isNearBottom))
+        ) {
+          const newY = isMobile ? 24 : window.innerHeight - toolbarHeight - 24;
+          return {
+            x: Math.max(8, (window.innerWidth - toolbarWidth) / 2),
+            y: Math.max(8, newY),
+          };
+        }
+
+        // Otherwise just ensure it's within bounds
+        return {
+          x: Math.max(
+            8,
+            Math.min(window.innerWidth - toolbarWidth - 8, prev.x),
+          ),
+          y: Math.max(
+            8,
+            Math.min(window.innerHeight - toolbarHeight - 8, prev.y),
+          ),
+        };
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -318,7 +400,7 @@ export const RecordingToolbar = () => {
       }
     : null;
 
-  // Calculate expected zoom (same logic as handleClickRecord)
+  // Calculate expected zoom (same logic as pre-recording setup)
   const configRes =
     RECORDING_RESOLUTIONS[
       recordingConfig.aspectRatio as keyof typeof RECORDING_RESOLUTIONS
@@ -326,8 +408,14 @@ export const RecordingToolbar = () => {
   const configWidth = configRes.width;
   const configHeight = configRes.height;
   const aspectRatio = configWidth / configHeight;
-  const maxW = window.innerWidth * 0.8;
-  const maxH = window.innerHeight * 0.8;
+
+  // Use same ratio as RecordingOverlay
+  const isMobileDebug = window.innerWidth <= 768;
+  const widthRatioDebug = isMobileDebug ? 1.0 : 0.8;
+  const heightRatioDebug = isMobileDebug ? 1.0 : 0.8;
+
+  const maxW = window.innerWidth * widthRatioDebug;
+  const maxH = window.innerHeight * heightRatioDebug;
   let areaWDebug = maxW;
   let areaHDebug = areaWDebug / aspectRatio;
   if (areaHDebug > maxH) {
@@ -386,6 +474,27 @@ ${slides
 
   return (
     <>
+      {/* Toolbar position debug (always visible on mobile) */}
+      {window.innerWidth <= 768 && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            right: 0,
+            background: "rgba(255, 0, 0, 0.8)",
+            color: "#fff",
+            padding: "4px 8px",
+            fontSize: "10px",
+            zIndex: 10000,
+            fontFamily: "monospace",
+          }}
+        >
+          Toolbar: {Math.round(toolbarPosition.x)},{" "}
+          {Math.round(toolbarPosition.y)}
+          <br />
+          Window: {window.innerWidth} x {window.innerHeight}
+        </div>
+      )}
       {/* Debug Info Panel */}
       {isOpen && slides.length > 0 && (
         <div

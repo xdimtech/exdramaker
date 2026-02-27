@@ -48,7 +48,9 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({ zoom = 1 }) => {
   const listRef = useRef<HTMLDivElement>(null);
 
   const handleStartRecording = () => {
-    if (slides.length === 0) return;
+    if (slides.length === 0) {
+      return;
+    }
 
     // Get recording resolution from config
     const resolution =
@@ -131,7 +133,9 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({ zoom = 1 }) => {
     // If recording area is positioned (pre-recording or recording), shift slides
     if (recordingAreaPosition) {
       const clickedSlide = slides.find((s) => s.id === slideId);
-      if (!clickedSlide) return;
+      if (!clickedSlide) {
+        return;
+      }
 
       // Get current position of clicked slide
       const clickedSlideX = clickedSlide.x || 0;
@@ -235,7 +239,14 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({ zoom = 1 }) => {
     // Scroll to the new slide after render
     setTimeout(() => {
       if (listRef.current) {
-        listRef.current.scrollTop = listRef.current.scrollHeight;
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+          // Horizontal scroll to end on mobile
+          listRef.current.scrollLeft = listRef.current.scrollWidth;
+        } else {
+          // Vertical scroll to end on desktop
+          listRef.current.scrollTop = listRef.current.scrollHeight;
+        }
       }
     }, 50);
   };
@@ -257,20 +268,42 @@ export const SlideNavigator: React.FC<SlideNavigatorProps> = ({ zoom = 1 }) => {
     if (activeSlideId && listRef.current) {
       const activeIndex = slides.findIndex((s) => s.id === activeSlideId);
       if (activeIndex >= 0) {
-        const buttonHeight = 32; // height + gap
-        const scrollPosition = activeIndex * buttonHeight;
-        const containerHeight = listRef.current.clientHeight;
-        const currentScroll = listRef.current.scrollTop;
+        const isMobile = window.innerWidth <= 768;
 
-        // Only scroll if the active button is outside the visible area
-        if (
-          scrollPosition < currentScroll ||
-          scrollPosition > currentScroll + containerHeight - buttonHeight
-        ) {
-          listRef.current.scrollTo({
-            top: scrollPosition - containerHeight / 2 + buttonHeight / 2,
-            behavior: "smooth",
-          });
+        if (isMobile) {
+          // Horizontal scroll on mobile
+          const buttonWidth = 36 + 6; // width + gap
+          const scrollPosition = activeIndex * buttonWidth;
+          const containerWidth = listRef.current.clientWidth;
+          const currentScroll = listRef.current.scrollLeft;
+
+          // Only scroll if the active button is outside the visible area
+          if (
+            scrollPosition < currentScroll ||
+            scrollPosition > currentScroll + containerWidth - buttonWidth
+          ) {
+            listRef.current.scrollTo({
+              left: scrollPosition - containerWidth / 2 + buttonWidth / 2,
+              behavior: "smooth",
+            });
+          }
+        } else {
+          // Vertical scroll on desktop
+          const buttonHeight = 32 + 6; // height + gap
+          const scrollPosition = activeIndex * buttonHeight;
+          const containerHeight = listRef.current.clientHeight;
+          const currentScroll = listRef.current.scrollTop;
+
+          // Only scroll if the active button is outside the visible area
+          if (
+            scrollPosition < currentScroll ||
+            scrollPosition > currentScroll + containerHeight - buttonHeight
+          ) {
+            listRef.current.scrollTo({
+              top: scrollPosition - containerHeight / 2 + buttonHeight / 2,
+              behavior: "smooth",
+            });
+          }
         }
       }
     }

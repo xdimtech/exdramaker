@@ -61,9 +61,7 @@ export const RecordingDialog = ({ onCloseRequest }: RecordingDialogProps) => {
         setMicrophones(
           devices.filter((device) => device.kind === "audioinput"),
         );
-        setCameras(
-          devices.filter((device) => device.kind === "videoinput"),
-        );
+        setCameras(devices.filter((device) => device.kind === "videoinput"));
       } catch (error) {
         console.error("Failed to enumerate devices:", error);
       }

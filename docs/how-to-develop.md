@@ -489,11 +489,11 @@ import { Excalidraw, MainMenu } from "@excalidraw/excalidraw";
 
 通过环境变量可以隐藏侧边栏菜单中的特定选项：
 
-| 环境变量 | 说明 | 默认值 |
-|----------|------|--------|
-| `VITE_SHOW_LIVE_COLLABORATION` | 隐藏实时协作入口 | `true` |
-| `VITE_SHOW_EXCALIDRAW_PLUS` | 隐藏 Excalidraw+ 链接 | `true` |
-| `VITE_SHOW_DISCORD` | 隐藏 Discord 社交链接 | `true` |
+| 环境变量                       | 说明                  | 默认值 |
+| ------------------------------ | --------------------- | ------ |
+| `VITE_SHOW_LIVE_COLLABORATION` | 隐藏实时协作入口      | `true` |
+| `VITE_SHOW_EXCALIDRAW_PLUS`    | 隐藏 Excalidraw+ 链接 | `true` |
+| `VITE_SHOW_DISCORD`            | 隐藏 Discord 社交链接 | `true` |
 
 **配置方法**：在 `excalidraw-app/.env.development`（开发环境）或 `excalidraw-app/.env`（生产环境）中设置：
 
