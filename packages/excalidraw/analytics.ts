@@ -2,9 +2,42 @@
 
 import { isDevEnv } from "@excalidraw/common";
 
-// small subset of categories at a given time.
-const ALLOWED_CATEGORIES_TO_TRACK = new Set(["command_palette", "export"]);
+import {
+  AnalyticsManager,
+  PostHogProvider,
+  SimpleAnalyticsProvider,
+} from "./analytics/index";
 
+// small subset of categories at a given time.
+const ALLOWED_CATEGORIES_TO_TRACK = new Set([
+  "command_palette",
+  "export",
+  "element", // Create, delete, modify elements
+  "clipboard", // Copy, paste, cut operations
+  "selection", // Select, deselect operations
+  "share", // Collaboration, room creation/joining
+  "feature", // AI, text-to-diagram, libraries
+  "app", // Load, version, errors, performance
+]);
+
+// Initialize analytics manager with providers
+const analyticsManager = new AnalyticsManager(!import.meta.env.PROD);
+
+// Register providers (both Simple Analytics and PostHog)
+analyticsManager.registerProvider(new SimpleAnalyticsProvider());
+analyticsManager.registerProvider(new PostHogProvider());
+
+/**
+ * Track an analytics event
+ *
+ * Events are dispatched to all enabled providers (Simple Analytics, PostHog).
+ * Only tracks events in allowed categories and when tracking is enabled.
+ *
+ * @param category - Event category (e.g., "export", "command_palette")
+ * @param action - Event action (e.g., "png", "open")
+ * @param label - Optional event label
+ * @param value - Optional numeric value
+ */
 export const trackEvent = (
   category: string,
   action: string,
@@ -33,13 +66,8 @@ export const trackEvent = (
       console.info("trackEvent", { category, action, label, value });
     }
 
-    if (window.sa_event) {
-      window.sa_event(action, {
-        category,
-        label,
-        value,
-      });
-    }
+    // Dispatch to all enabled providers
+    analyticsManager.trackEvent(category, action, label, value);
   } catch (error) {
     console.error("error during analytics", error);
   }

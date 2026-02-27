@@ -56,14 +56,16 @@ export const CanvasSlides: React.FC<CanvasSlidesProps> = ({
   elements,
   onElementsUpdate,
 }) => {
-  console.log(
-    "[CanvasSlides] scrollX:",
-    scrollX,
-    "scrollY:",
-    scrollY,
-    "zoom:",
-    zoom,
-  );
+  if (window.visualDebug) {
+    console.log(
+      "[CanvasSlides] scrollX:",
+      scrollX,
+      "scrollY:",
+      scrollY,
+      "zoom:",
+      zoom,
+    );
+  }
   const slides = useAtomValue(slidesAtom);
   const activeSlideId = useAtomValue(activeSlideIdAtom);
   const setActiveSlideIdAtom = useSetAtom(activeSlideIdAtom);

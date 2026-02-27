@@ -5,6 +5,7 @@
 本文档记录了 Excalidraw 录制功能在移动端（手机浏览器）的响应式适配工作，包括 UI 布局调整、交互优化和缩放问题修复。
 
 **适配范围**：
+
 - RecordingToolbar（录制工具栏）
 - SlideNavigator（幻灯片导航器）
 - RecordingDialog（录制设置对话框）
@@ -18,12 +19,14 @@
 ## 1. RecordingToolbar 移动端适配
 
 ### 1.1 问题
+
 - 原本固定在底部居中
 - 在移动端无法渲染（被 `formFactor !== "phone"` 条件排除）
 
 ### 1.2 解决方案
 
 #### 修改文件
+
 - `packages/excalidraw/components/LayerUI.tsx`
 - `packages/excalidraw/components/Recording/RecordingToolbar.tsx`
 - `packages/excalidraw/components/Recording/RecordingToolbar.scss`
@@ -31,17 +34,21 @@
 #### 1.2.1 LayerUI.tsx - 移除渲染限制
 
 **修改前**：
+
 ```tsx
-{editorInterface.formFactor !== "phone" && (
-  <>
-    <RecordingToolbar />
-    <RecordingOverlay />
-    <Teleprompter />
-  </>
-)}
+{
+  editorInterface.formFactor !== "phone" && (
+    <>
+      <RecordingToolbar />
+      <RecordingOverlay />
+      <Teleprompter />
+    </>
+  );
+}
 ```
 
 **修改后**：
+
 ```tsx
 {editorInterface.formFactor !== "phone" && (
   <>
@@ -57,6 +64,7 @@
 #### 1.2.2 RecordingToolbar.tsx - 自适应定位
 
 **核心逻辑**：
+
 ```typescript
 const isMobile = window.innerWidth <= 768;
 
@@ -68,16 +76,21 @@ const initialY = isMobile
 ```
 
 **Resize 处理**：
+
 ```typescript
 const handleResize = () => {
   const isMobile = window.innerWidth <= 768;
   // 检测是否在预期位置附近
-  const isNearCenter = Math.abs(prev.x - (window.innerWidth - toolbarWidth) / 2) < 50;
+  const isNearCenter =
+    Math.abs(prev.x - (window.innerWidth - toolbarWidth) / 2) < 50;
   const isNearTop = prev.y < 100;
   const isNearBottom = prev.y > window.innerHeight - toolbarHeight - 100;
 
   // 根据设备类型重新定位
-  if (isNearCenter && ((isMobile && isNearTop) || (!isMobile && isNearBottom))) {
+  if (
+    isNearCenter &&
+    ((isMobile && isNearTop) || (!isMobile && isNearBottom))
+  ) {
     return { x: centerX, y: isMobile ? 24 : bottom };
   }
 };
@@ -109,11 +122,13 @@ const handleResize = () => {
 ### 1.3 最终效果
 
 **移动端**：
+
 - 位置：顶部居中（top: 24px）
 - 尺寸：按钮和字体略小
 - 可拖动，但自动适配屏幕边界
 
 **桌面端**：
+
 - 位置：底部居中（保持原样）
 - 尺寸：保持原样
 
@@ -122,12 +137,14 @@ const handleResize = () => {
 ## 2. SlideNavigator 移动端适配
 
 ### 2.1 问题
+
 - 原本垂直布局在右侧
 - 移动端空间有限，垂直布局占用太多高度
 
 ### 2.2 解决方案
 
 #### 修改文件
+
 - `packages/excalidraw/components/SlideNavigator.scss`
 - `packages/excalidraw/components/SlideNavigator.tsx`
 
@@ -186,6 +203,7 @@ const handleResize = () => {
 #### 2.2.2 SlideNavigator.tsx - 滚动逻辑
 
 **自动滚动到激活的幻灯片**：
+
 ```typescript
 useEffect(() => {
   if (activeSlideId && listRef.current) {
@@ -216,11 +234,13 @@ useEffect(() => {
 ### 2.3 最终效果
 
 **移动端**：
+
 - 位置：底部水平居中，在 App-toolbar 上方 70px
 - 布局：水平排列，支持左右滑动
 - 按钮：36px × 36px，更大的触摸目标
 
 **桌面端**：
+
 - 位置：右侧垂直居中（保持原样）
 - 布局：垂直排列，支持上下滚动
 
@@ -229,6 +249,7 @@ useEffect(() => {
 ## 3. RecordingDialog 移动端适配
 
 ### 3.1 问题
+
 - 左右分栏布局在小屏幕严重挤压
 - 固定高度 640px 超出移动端屏幕
 - 所有元素尺寸过大
@@ -236,6 +257,7 @@ useEffect(() => {
 ### 3.2 解决方案
 
 #### 修改文件
+
 - `packages/excalidraw/components/RecordingDialog.scss`
 - `packages/excalidraw/components/Recording/AspectRatioSelector.scss`
 - `packages/excalidraw/components/Recording/BackgroundWallpaperPicker.scss`
@@ -334,12 +356,14 @@ useEffect(() => {
 ### 3.3 最终效果
 
 **移动端**：
+
 - 布局：预览在上，设置在下（垂直布局）
 - 高度：85vh，可滚动
 - 底部按钮：固定在底部，等宽显示
 - 所有元素：字体和间距缩小
 
 **桌面端**：
+
 - 布局：预览在左，设置在右（保持原样）
 
 ---
@@ -347,6 +371,7 @@ useEffect(() => {
 ## 4. RecordingOverlay 移动端适配
 
 ### 4.1 问题
+
 - 默认宽度为 canvas 的 80%
 - 移动端应该占满整个屏幕宽度
 - 触摸手柄太小，不易操作
@@ -354,6 +379,7 @@ useEffect(() => {
 ### 4.2 解决方案
 
 #### 修改文件
+
 - `packages/excalidraw/components/Recording/RecordingOverlay.tsx`
 - `packages/excalidraw/components/Recording/RecordingOverlay.scss`
 
@@ -422,12 +448,14 @@ useEffect(() => {
 ### 4.3 最终效果
 
 **移动端**：
+
 - 宽度：100% 窗口宽度
 - 边框：1px，更薄
 - 手柄：16px，更大
 - REC 徽章：缩小字体
 
 **桌面端**：
+
 - 宽度：80% canvas 宽度（保持原样）
 
 ---
@@ -435,6 +463,7 @@ useEffect(() => {
 ## 5. Slide 缩放问题修复
 
 ### 5.1 问题
+
 - RecordingOverlay 已改为 100% 宽度
 - 但计算 slide zoom 时仍使用 80% 宽度
 - 导致 slide 大小与 RecordingOverlay 不匹配
@@ -442,11 +471,13 @@ useEffect(() => {
 ### 5.2 解决方案
 
 #### 修改文件
+
 - `packages/excalidraw/components/Recording/RecordingToolbar.tsx`
 
 #### 5.2.1 Pre-recording 阶段的 zoom 计算
 
 **修改前**：
+
 ```typescript
 const maxWidth = window.innerWidth * 0.8;
 const maxHeight = window.innerHeight * 0.8;
@@ -456,6 +487,7 @@ const zoom = areaW / firstSlide.width;
 ```
 
 **修改后**：
+
 ```typescript
 // 移动端使用 100%，桌面端使用 80%
 const isMobile = window.innerWidth <= 768;
@@ -498,10 +530,12 @@ const maxH = window.innerHeight * heightRatioDebug;
 ### 5.3 最终效果
 
 **移动端**：
+
 - Zoom 计算：基于 100% 窗口宽度
 - Slide 大小 = RecordingOverlay 大小 ✅
 
 **桌面端**：
+
 - Zoom 计算：基于 80% 窗口宽度
 - Slide 大小 = RecordingOverlay 大小 ✅
 
@@ -519,6 +553,7 @@ const maxH = window.innerHeight * heightRatioDebug;
 ```
 
 **JavaScript 中的判断**：
+
 ```typescript
 const isMobile = window.innerWidth <= 768;
 ```
@@ -542,6 +577,7 @@ const isMobile = window.innerWidth <= 768;
 ### 6.3 布局策略
 
 **垂直空间有限**：
+
 - 桌面端：垂直布局优先
 - 移动端：水平布局或堆叠布局
 
@@ -573,6 +609,7 @@ useEffect(() => {
 移动端浏览器地址栏会动态显示/隐藏，导致 `window.innerHeight` 变化。
 
 **解决方案**：
+
 - 使用 `vh` 单位时要小心
 - 监听 resize 事件动态调整
 - 使用 sticky 定位固定关键元素
@@ -580,6 +617,7 @@ useEffect(() => {
 ### 6.6 调试技巧
 
 **添加移动端 Debug 面板**：
+
 ```tsx
 {window.innerWidth <= 768 && (
   <div style={{ position: "fixed", top: 0, right: 0, ... }}>
@@ -589,6 +627,7 @@ useEffect(() => {
 ```
 
 **Console 日志**：
+
 ```typescript
 console.log("[Component] isMobile:", isMobile, "width:", width);
 ```
@@ -721,20 +760,20 @@ packages/excalidraw/components/
 
 ### 9.2 修改统计
 
-| 文件 | 修改内容 | 行数 |
-|------|---------|------|
-| LayerUI.tsx | 移除渲染条件 | ~10 |
-| RecordingToolbar.tsx | 定位逻辑 + zoom 计算 | ~80 |
-| RecordingToolbar.scss | 移动端样式 | ~50 |
-| RecordingOverlay.tsx | 宽度计算 | ~20 |
-| RecordingOverlay.scss | 移动端样式 | ~60 |
-| RecordingDialog.scss | 响应式布局 | ~120 |
-| SlideNavigator.tsx | 滚动逻辑 | ~30 |
-| SlideNavigator.scss | 水平布局 | ~80 |
-| AspectRatioSelector.scss | 移动端样式 | ~20 |
-| BackgroundWallpaperPicker.scss | 移动端样式 | ~40 |
-| RecordingPreview.scss | 移动端样式 | ~30 |
-| withInternalFallback.tsx | Hooks 规则修复 | ~30 |
+| 文件                           | 修改内容             | 行数 |
+| ------------------------------ | -------------------- | ---- |
+| LayerUI.tsx                    | 移除渲染条件         | ~10  |
+| RecordingToolbar.tsx           | 定位逻辑 + zoom 计算 | ~80  |
+| RecordingToolbar.scss          | 移动端样式           | ~50  |
+| RecordingOverlay.tsx           | 宽度计算             | ~20  |
+| RecordingOverlay.scss          | 移动端样式           | ~60  |
+| RecordingDialog.scss           | 响应式布局           | ~120 |
+| SlideNavigator.tsx             | 滚动逻辑             | ~30  |
+| SlideNavigator.scss            | 水平布局             | ~80  |
+| AspectRatioSelector.scss       | 移动端样式           | ~20  |
+| BackgroundWallpaperPicker.scss | 移动端样式           | ~40  |
+| RecordingPreview.scss          | 移动端样式           | ~30  |
+| withInternalFallback.tsx       | Hooks 规则修复       | ~30  |
 
 **总计**: ~570 行代码修改
 
@@ -749,14 +788,17 @@ packages/excalidraw/components/
 ### 10.2 未来改进方向
 
 1. **性能优化**
+
    - 考虑使用 IntersectionObserver 优化 slide 滚动
    - 减少 resize 事件的触发频率（debounce）
 
 2. **用户体验**
+
    - 添加移动端手势支持（双指缩放录制区域）
    - 提供快捷预设（一键适配屏幕）
 
 3. **可访问性**
+
    - 添加 ARIA 标签
    - 支持键盘导航
 
@@ -792,6 +834,4 @@ packages/excalidraw/components/
 
 ---
 
-**文档版本**: 1.0
-**最后更新**: 2026-02-27
-**维护者**: Claude Code
+**文档版本**: 1.0 **最后更新**: 2026-02-27 **维护者**: Claude Code

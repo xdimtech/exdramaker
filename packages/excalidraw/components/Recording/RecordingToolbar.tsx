@@ -107,18 +107,20 @@ export const RecordingToolbar = () => {
       }
 
       const zoom = areaW / firstSlide.width;
-      console.log(
-        "[RecordingToolbar useEffect] status: pre-recording, zoom from config:",
-        zoom,
-        "isMobile:",
-        isMobile,
-        "widthRatio:",
-        widthRatio,
-        "areaW:",
-        areaW,
-        "firstSlide.width:",
-        firstSlide.width,
-      );
+      if (window.visualDebug) {
+        console.log(
+          "[RecordingToolbar useEffect] status: pre-recording, zoom from config:",
+          zoom,
+          "isMobile:",
+          isMobile,
+          "widthRatio:",
+          widthRatio,
+          "areaW:",
+          areaW,
+          "firstSlide.width:",
+          firstSlide.width,
+        );
+      }
 
       // Set zoom and scroll to 0
       window.dispatchEvent(
@@ -134,12 +136,14 @@ export const RecordingToolbar = () => {
       const targetSlideX = recordingAreaPosition.x / zoom;
       const targetSlideY = recordingAreaPosition.y / zoom;
 
-      console.log(
-        "[RecordingToolbar] targetSlideX:",
-        targetSlideX,
-        "targetSlideY:",
-        targetSlideY,
-      );
+      if (window.visualDebug) {
+        console.log(
+          "[RecordingToolbar] targetSlideX:",
+          targetSlideX,
+          "targetSlideY:",
+          targetSlideY,
+        );
+      }
 
       // Calculate offset from current position to target position
       const currentSlideX = firstSlide.x || 0;
@@ -167,13 +171,15 @@ export const RecordingToolbar = () => {
       const toolbarHeight = toolbarRef.current?.offsetHeight ?? 48;
       const isMobile = window.innerWidth <= 768;
 
-      console.log("[RecordingToolbar] Initializing position:", {
-        toolbarWidth,
-        toolbarHeight,
-        windowWidth: window.innerWidth,
-        windowHeight: window.innerHeight,
-        isMobile,
-      });
+      if (window.visualDebug) {
+        console.log("[RecordingToolbar] Initializing position:", {
+          toolbarWidth,
+          toolbarHeight,
+          windowWidth: window.innerWidth,
+          windowHeight: window.innerHeight,
+          isMobile,
+        });
+      }
 
       // Center horizontally
       const initialX = (window.innerWidth - toolbarWidth) / 2;
@@ -182,10 +188,12 @@ export const RecordingToolbar = () => {
         ? 24 // Top on mobile
         : window.innerHeight - toolbarHeight - 24; // Bottom on desktop
 
-      console.log("[RecordingToolbar] Calculated position:", {
-        initialX,
-        initialY,
-      });
+      if (window.visualDebug) {
+        console.log("[RecordingToolbar] Calculated position:", {
+          initialX,
+          initialY,
+        });
+      }
 
       setToolbarPosition({
         x: Math.max(8, initialX),
@@ -321,10 +329,12 @@ export const RecordingToolbar = () => {
 
   // Pre-recording → Recording: signal overlay to start engine
   const handleBegin = () => {
-    console.log(
-      "[RecordingToolbar handleBegin] called, slides.length:",
-      slides.length,
-    );
+    if (window.visualDebug) {
+      console.log(
+        "[RecordingToolbar handleBegin] called, slides.length:",
+        slides.length,
+      );
+    }
     // 关闭录制设置弹框
     setAppState({ openDialog: null });
 

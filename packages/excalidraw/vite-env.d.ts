@@ -43,6 +43,12 @@ interface ImportMetaEnv {
   VITE_APP_ENABLE_ESLINT: string;
   VITE_APP_ENABLE_TRACKING: string;
 
+  // PostHog Analytics
+  VITE_APP_POSTHOG_ENABLED: string;
+  VITE_APP_POSTHOG_KEY: string;
+  VITE_APP_POSTHOG_HOST: string;
+  VITE_APP_POSTHOG_DEBUG: string;
+
   PKG_NAME: string;
   PKG_VERSION: string;
 

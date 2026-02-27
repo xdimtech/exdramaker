@@ -8,6 +8,15 @@ interface Window {
   gtag: Function;
   sa_event: Function;
   fathom: { trackEvent: Function };
+  posthog?: {
+    init(apiKey: string, config: any): void;
+    capture(eventName: string, properties?: Record<string, any>): void;
+    identify(distinctId: string, properties?: Record<string, any>): void;
+    reset(): void;
+    isFeatureEnabled(key: string): boolean;
+  };
+  // Visual Debug flag for Recording/Slides debug logging and UI
+  visualDebug?: boolean;
   // Test hook for development/testing
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   h: any;
