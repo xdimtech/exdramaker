@@ -96,7 +96,8 @@ pm2 delete exdramaker 2>/dev/null || true
 
 # 启动新进程
 cd excalidraw-app
-pm2 start npx --name exdramaker -- -y http-server@latest -a 0.0.0.0 -p 5001 --cors ./build
+# -c-1: 禁用缓存，确保 HTML 文件始终获取最新版本
+pm2 start npx --name exdramaker -- -y http-server@latest -a 0.0.0.0 -p 5001 --cors -c-1 ./build
 pm2 save
 
 log_info "✓ 服务已重启"
