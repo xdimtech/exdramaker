@@ -130,11 +130,12 @@ start_local_server() {
 
     # 启动应用
     cd excalidraw-app
-    # -c-1: 禁用缓存，确保 HTML 文件始终获取最新版本
+    # -c3600: 缓存1小时，平衡性能和更新速度
+    # 对于更好的缓存控制，建议使用 Nginx（见 docs/deploy-nginx.md）
     # --cors: 启用 CORS
     # -a 0.0.0.0: 监听所有网络接口
     # -p 5001: 端口号
-    pm2 start npx --name exdramaker -- -y http-server@latest -a 0.0.0.0 -p 5001 --cors -c-1 ./build
+    pm2 start npx --name exdramaker -- -y http-server@latest -a 0.0.0.0 -p 5001 --cors -c3600 ./build
     pm2 save
 
     log_info "本地服务器已启动！"
