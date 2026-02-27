@@ -15,8 +15,11 @@ interface Window {
     reset(): void;
     isFeatureEnabled(key: string): boolean;
   };
-  // Visual Debug flag for Recording/Slides debug logging and UI
-  visualDebug?: boolean;
+  // Visual Debug for Recording/Slides debug logging and UI
+  visualDebug?: {
+    data: any[][];
+    currentFrame?: number;
+  };
   // Test hook for development/testing
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   h: any;

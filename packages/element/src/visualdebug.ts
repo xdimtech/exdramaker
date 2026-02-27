@@ -19,16 +19,6 @@ import type { ElementsMap, ExcalidrawElement } from "@excalidraw/element/types";
 import type { Curve } from "@excalidraw/math";
 import type { LineSegment } from "@excalidraw/utils";
 
-// The global data holder to collect the debug operations
-declare global {
-  interface Window {
-    visualDebug?: {
-      data: DebugElement[][];
-      currentFrame?: number;
-    };
-  }
-}
-
 export type DebugElement = {
   color: string;
   data: LineSegment<GlobalPoint> | Curve<GlobalPoint> | DebugPolygon;
