@@ -474,8 +474,8 @@ ${slides
 
   return (
     <>
-      {/* Toolbar position debug (always visible on mobile) */}
-      {window.innerWidth <= 768 && (
+      {/* Toolbar position debug (controlled by Visual Debug) */}
+      {window.visualDebug && window.innerWidth <= 768 && (
         <div
           style={{
             position: "fixed",
@@ -495,8 +495,8 @@ ${slides
           Window: {window.innerWidth} x {window.innerHeight}
         </div>
       )}
-      {/* Debug Info Panel */}
-      {isOpen && slides.length > 0 && (
+      {/* Debug Info Panel (controlled by Visual Debug) */}
+      {window.visualDebug && isOpen && slides.length > 0 && (
         <div
           style={{
             position: "fixed",
