@@ -1,10 +1,19 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import posthog from "posthog-js";
 
 import {
   AnalyticsManager,
   PostHogProvider,
   SimpleAnalyticsProvider,
 } from "../analytics/index";
+
+// Mock posthog-js module
+vi.mock("posthog-js", () => ({
+  default: {
+    __loaded: false,
+    capture: vi.fn(),
+  },
+}));
 
 describe("Analytics System", () => {
   // Save original environment
@@ -14,8 +23,11 @@ describe("Analytics System", () => {
     // Reset window object
     if (typeof window !== "undefined") {
       delete (window as any).sa_event;
-      delete (window as any).posthog;
     }
+
+    // Reset posthog mock
+    vi.clearAllMocks();
+    (posthog as any).__loaded = false;
 
     // Reset environment
     Object.keys(originalEnv).forEach((key) => {
@@ -58,7 +70,9 @@ describe("Analytics System", () => {
 
     it("should isolate provider failures", () => {
       const manager = new AnalyticsManager();
-      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const consoleSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
 
       // Create a failing provider
       const failingProvider = {
@@ -129,8 +143,8 @@ describe("Analytics System", () => {
   });
 
   describe("PostHogProvider", () => {
-    it("should be enabled when posthog exists and tracking is on", () => {
-      (window as any).posthog = { capture: vi.fn() };
+    it("should be enabled when posthog is loaded and tracking is on", () => {
+      (posthog as any).__loaded = true;
       (import.meta.env as any).VITE_APP_ENABLE_TRACKING = "true";
       (import.meta.env as any).VITE_APP_POSTHOG_ENABLED = "true";
 
@@ -139,7 +153,7 @@ describe("Analytics System", () => {
     });
 
     it("should be disabled when PostHog is disabled in env", () => {
-      (window as any).posthog = { capture: vi.fn() };
+      (posthog as any).__loaded = true;
       (import.meta.env as any).VITE_APP_ENABLE_TRACKING = "true";
       (import.meta.env as any).VITE_APP_POSTHOG_ENABLED = "false";
 
@@ -148,8 +162,7 @@ describe("Analytics System", () => {
     });
 
     it("should track events with correct format", () => {
-      const capturespy = vi.fn();
-      (window as any).posthog = { capture: capturespy };
+      (posthog as any).__loaded = true;
       (import.meta.env as any).VITE_APP_ENABLE_TRACKING = "true";
       (import.meta.env as any).VITE_APP_POSTHOG_ENABLED = "true";
       (import.meta.env as any).PKG_VERSION = "1.0.0";
@@ -158,7 +171,7 @@ describe("Analytics System", () => {
       const provider = new PostHogProvider();
       provider.trackEvent("export", "png", "canvas", 100);
 
-      expect(capturespy).toHaveBeenCalledWith("export:png", {
+      expect(posthog.capture).toHaveBeenCalledWith("export:png", {
         category: "export",
         action: "png",
         label: "canvas",
@@ -169,8 +182,7 @@ describe("Analytics System", () => {
     });
 
     it("should track events without optional parameters", () => {
-      const capturespy = vi.fn();
-      (window as any).posthog = { capture: capturespy };
+      (posthog as any).__loaded = true;
       (import.meta.env as any).VITE_APP_ENABLE_TRACKING = "true";
       (import.meta.env as any).VITE_APP_POSTHOG_ENABLED = "true";
       (import.meta.env as any).PKG_VERSION = "1.0.0";
@@ -179,7 +191,7 @@ describe("Analytics System", () => {
       const provider = new PostHogProvider();
       provider.trackEvent("export", "png");
 
-      expect(capturespy).toHaveBeenCalledWith("export:png", {
+      expect(posthog.capture).toHaveBeenCalledWith("export:png", {
         category: "export",
         action: "png",
         app_version: "1.0.0",
@@ -190,15 +202,14 @@ describe("Analytics System", () => {
 
   describe("Privacy Compliance", () => {
     it("should not track PII in event properties", () => {
-      const capturespy = vi.fn();
-      (window as any).posthog = { capture: capturespy };
+      (posthog as any).__loaded = true;
       (import.meta.env as any).VITE_APP_ENABLE_TRACKING = "true";
       (import.meta.env as any).VITE_APP_POSTHOG_ENABLED = "true";
 
       const provider = new PostHogProvider();
       provider.trackEvent("feature", "ai_used", "text-to-diagram");
 
-      const [, properties] = capturespy.mock.calls[0];
+      const [, properties] = (posthog.capture as any).mock.calls[0];
 
       // Ensure no PII fields
       expect(properties).not.toHaveProperty("email");

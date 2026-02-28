@@ -1,10 +1,13 @@
+import posthog from "posthog-js";
+
 import type { AnalyticsProvider } from "../types";
 
 /**
  * PostHog Analytics Provider
  *
  * Integrates with PostHog Cloud for advanced product analytics.
- * Configured with privacy-first settings (no session recording, no autocapture).
+ * Uses the official posthog-js library with privacy-first settings
+ * (no session recording, no autocapture).
  */
 export class PostHogProvider implements AnalyticsProvider {
   name = "PostHog";
@@ -12,7 +15,7 @@ export class PostHogProvider implements AnalyticsProvider {
   isEnabled(): boolean {
     return (
       typeof window !== "undefined" &&
-      typeof window.posthog !== "undefined" &&
+      posthog.__loaded &&
       import.meta.env.VITE_APP_ENABLE_TRACKING === "true" &&
       import.meta.env.VITE_APP_POSTHOG_ENABLED === "true"
     );
@@ -24,7 +27,7 @@ export class PostHogProvider implements AnalyticsProvider {
     label?: string,
     value?: number,
   ): void {
-    if (!this.isEnabled() || !window.posthog) {
+    if (!this.isEnabled()) {
       return;
     }
 
@@ -51,7 +54,7 @@ export class PostHogProvider implements AnalyticsProvider {
       properties.environment = import.meta.env.MODE || "production";
 
       // Track event in PostHog
-      window.posthog.capture(eventName, properties);
+      posthog.capture(eventName, properties);
     } catch (error) {
       console.error("[Analytics] PostHog error:", error);
     }

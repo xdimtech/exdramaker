@@ -58,8 +58,11 @@ export const trackEvent = (
     }
 
     if (isDevEnv()) {
-      // comment out to debug in dev
-      return;
+      // Allow tracking in dev when debug mode is enabled
+      if (import.meta.env.VITE_APP_POSTHOG_DEBUG !== "true") {
+        return;
+      }
+      console.info("[Analytics] Dev mode tracking enabled (debug mode)");
     }
 
     if (!import.meta.env.PROD) {

@@ -2,7 +2,7 @@
 
 本指南帮助你验证 PostHog 分析是否正常工作。
 
-## 🔍 快速检查（5分钟）
+## 🔍 快速检查（5 分钟）
 
 ### 步骤 1: 启动开发服务器
 
@@ -34,10 +34,11 @@ yarn start
 在控制台输入以下命令：
 
 ```javascript
-window.posthog
+window.posthog;
 ```
 
 **预期结果：**
+
 - 应该返回一个对象（不是 `undefined`）
 - 对象包含 `capture`、`init` 等方法
 
@@ -48,20 +49,22 @@ window.posthog
 在应用中执行以下任一操作：
 
 1. **导出图片**
+
    - 点击左上角菜单 → Export image → PNG
    - 或使用快捷键
 
 2. **打开命令面板**
+
    - 按 `Cmd+K` (Mac) 或 `Ctrl+K` (Windows/Linux)
 
 3. **手动触发事件（在控制台）**
    ```javascript
    // 导入 trackEvent 函数（如果在控制台）
    // 或直接调用 PostHog
-   window.posthog.capture('test:manual', {
-     category: 'test',
-     action: 'manual',
-     label: 'console_test'
+   window.posthog.capture("test:manual", {
+     category: "test",
+     action: "manual",
+     label: "console_test",
    });
    ```
 
@@ -87,6 +90,7 @@ window.posthog
 3. 在过滤器中输入 `posthog` 或 `capture`
 
 **查找以下请求：**
+
 - URL: `https://us.i.posthog.com/decide/` - PostHog 初始化
 - URL: `https://us.i.posthog.com/e/` 或 `/capture/` - 事件发送
 
@@ -100,9 +104,10 @@ window.posthog
 2. 登录你的账户
 3. 选择对应的项目
 4. 导航到 **Events（事件）** 页面
-5. 设置时间范围为 "Last 5 minutes（最近5分钟）"
+5. 设置时间范围为 "Last 5 minutes（最近 5 分钟）"
 
 **你应该看到：**
+
 - 事件名称格式：`category:action`（例如：`export:png`、`test:manual`）
 - 事件属性包含：
   - `category`
@@ -120,12 +125,14 @@ window.posthog
 ### 问题 1: 控制台没有看到 `[Analytics] Registered provider` 日志
 
 **可能原因：**
+
 - PostHog 脚本加载失败
 - 环境变量配置错误
 
 **解决方法：**
 
 1. 检查 `VITE_APP_POSTHOG_ENABLED` 是否为 `true`：
+
    ```bash
    cat .env.development | grep POSTHOG_ENABLED
    ```
@@ -137,6 +144,7 @@ window.posthog
 ### 问题 2: `window.posthog` 是 `undefined`
 
 **可能原因：**
+
 - PostHog 脚本未加载
 - API key 无效
 - 网络问题（被防火墙或广告拦截器阻止）
@@ -146,10 +154,12 @@ window.posthog
 1. 检查网络标签，查看是否有请求失败
 
 2. 检查是否有广告拦截器（uBlock、AdBlock 等）阻止了 PostHog：
+
    - 临时禁用广告拦截器
    - 或将 `localhost` 加入白名单
 
 3. 检查 PostHog API key 是否正确：
+
    ```bash
    cat .env.development | grep POSTHOG_KEY
    ```
@@ -160,6 +170,7 @@ window.posthog
 ### 问题 3: 事件没有出现在 PostHog 仪表板
 
 **可能原因：**
+
 - 事件类别未在允许列表中
 - 开发环境被 `isDevEnv()` 禁用
 - 时间延迟（PostHog 可能有 1-2 分钟延迟）
@@ -167,11 +178,13 @@ window.posthog
 **解决方法：**
 
 1. **检查事件类别是否在允许列表中：**
+
    ```bash
    cat packages/excalidraw/analytics.ts | grep -A 8 "ALLOWED_CATEGORIES_TO_TRACK"
    ```
 
    当前允许的类别：
+
    - `command_palette`
    - `export`
    - `element`
@@ -202,6 +215,7 @@ window.posthog
 ### 问题 4: 控制台显示 CORS 错误
 
 **错误信息：**
+
 ```
 Access to fetch at 'https://us.i.posthog.com/...' from origin 'http://localhost:3003'
 has been blocked by CORS policy
@@ -212,6 +226,7 @@ has been blocked by CORS policy
 这通常不是真正的 CORS 问题，而是：
 
 1. **PostHog host 配置错误**：
+
    ```bash
    # 检查配置
    cat .env.development | grep POSTHOG_HOST
@@ -230,12 +245,14 @@ has been blocked by CORS policy
 ### 问题 5: 事件在控制台显示但未发送到 PostHog
 
 **可能原因：**
+
 - `VITE_APP_ENABLE_TRACKING` 被设置为 `false`
 - PostHog 被浏览器扩展阻止
 
 **解决方法：**
 
 1. **检查主开关：**
+
    ```bash
    cat .env.development | grep VITE_APP_ENABLE_TRACKING
    ```
@@ -243,6 +260,7 @@ has been blocked by CORS policy
    应该是 `VITE_APP_ENABLE_TRACKING=true`
 
 2. **禁用浏览器隐私扩展（临时）：**
+
    - Privacy Badger
    - Ghostery
    - uBlock Origin
@@ -295,6 +313,7 @@ window.posthog.get_config();
 ```
 
 预期输出应包含：
+
 ```javascript
 {
   api_host: "https://us.i.posthog.com",
@@ -310,12 +329,12 @@ window.posthog.get_config();
 
 ```javascript
 // 在浏览器控制台
-window.posthog.capture('test_event', {
-  test_property: 'test_value',
-  timestamp: new Date().toISOString()
+window.posthog.capture("test_event", {
+  test_property: "test_value",
+  timestamp: new Date().toISOString(),
 });
 
-console.log('测试事件已发送！');
+console.log("测试事件已发送！");
 ```
 
 然后在 PostHog 仪表板查看 `test_event` 事件。
@@ -324,7 +343,7 @@ console.log('测试事件已发送！');
 
 ```javascript
 // 查看待发送的事件
-window.posthog._get_config('_send_request');
+window.posthog._get_config("_send_request");
 ```
 
 ---
@@ -338,6 +357,7 @@ window.posthog._get_config('_send_request');
 3. **在 PostHog 仪表板选择生产项目**
 
 验证方法：
+
 - 查看 Network 标签的 PostHog 请求
 - 在 PostHog 仪表板查看实时事件（Live Events）
 - 检查事件量是否符合预期（应该 > 1000 事件/天）
