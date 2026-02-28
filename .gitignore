@@ -26,6 +26,9 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+.env.development
+.env.production
+excalidraw-app/.env.production
 
 # Test
 coverage/
