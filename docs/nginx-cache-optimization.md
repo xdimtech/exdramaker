@@ -28,6 +28,7 @@ sudo nginx -t
 ```
 
 应该看到：
+
 ```
 nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
 nginx: configuration file /etc/nginx/nginx.conf test is successful
@@ -80,12 +81,12 @@ curl -I https://exdramaker.curiopal.cn/assets/index-u5-1jcPp.js | grep -i cache-
 新配置的缓存策略：
 
 | 资源类型 | 路径示例 | Cache-Control | 说明 |
-|---------|---------|---------------|------|
+| --- | --- | --- | --- |
 | HTML | `/` | `no-cache` | ✅ 始终获取最新版本 |
-| JS/CSS | `/assets/*.js` | `max-age=31536000, immutable` | ✅ 1年缓存，文件名有hash |
-| 字体 | `*.woff2` | `max-age=31536000` | ✅ 1年缓存 + CORS |
-| 图片 | `*.png`, `*.ico` | `max-age=86400` | ✅ 1天缓存 |
-| Manifest | `*.json`, `*.webmanifest` | `max-age=3600` | ✅ 1小时缓存 |
+| JS/CSS | `/assets/*.js` | `max-age=31536000, immutable` | ✅ 1 年缓存，文件名有 hash |
+| 字体 | `*.woff2` | `max-age=31536000` | ✅ 1 年缓存 + CORS |
+| 图片 | `*.png`, `*.ico` | `max-age=86400` | ✅ 1 天缓存 |
+| Manifest | `*.json`, `*.webmanifest` | `max-age=3600` | ✅ 1 小时缓存 |
 | 其他 | 其他路径 | `no-cache` | ✅ 默认不缓存 |
 
 ## 🎯 性能提升
@@ -93,16 +94,19 @@ curl -I https://exdramaker.curiopal.cn/assets/index-u5-1jcPp.js | grep -i cache-
 优化后的效果：
 
 **首次访问**:
+
 - HTML: ~5KB (快速加载)
 - JS bundle: ~3MB (压缩后 ~1MB，有 gzip)
 - 其他资源: ~500KB
 
 **重复访问**:
+
 - HTML: ~5KB (每次检查更新)
 - JS/CSS: **从缓存读取** (几乎瞬间)
 - 其他资源: **从缓存读取**
 
 **部署新版本后**:
+
 - HTML: 立即更新（不缓存）
 - JS/CSS: 文件名变了，自动获取新版本（hash 变化）
 - 用户无需手动清除缓存
@@ -123,11 +127,13 @@ sudo systemctl reload nginx
 ## 📝 配置文件对比
 
 **旧配置**:
+
 - 单一 `location /` 代理所有请求
 - 没有缓存控制头
 - http-server 用 `-c-1` 禁用所有缓存
 
 **新配置**:
+
 - 多个 `location` 规则，按文件类型分别处理
 - 精确的缓存控制头
 - HTML 不缓存，静态资源长期缓存
@@ -136,11 +142,13 @@ sudo systemctl reload nginx
 ## ⚠️ 注意事项
 
 1. **location 规则顺序很重要**:
+
    - 精确匹配 (`location = /`) 优先级最高
    - 正则匹配 (`location ~*`) 次之
    - 前缀匹配 (`location /`) 兜底
 
 2. **always 标志**:
+
    - `add_header ... always` 确保即使是 4xx/5xx 响应也添加头部
 
 3. **proxy_pass 重复**:

@@ -53,6 +53,7 @@ vercel --prod
 ```
 
 **配置说明：**
+
 - `buildCommand` - 构建命令（生产构建）
 - `outputDirectory` - 输出目录
 - `installCommand` - 依赖安装命令
@@ -61,6 +62,7 @@ vercel --prod
 ### `.vercelignore`
 
 排除不需要上传到 Vercel 的文件：
+
 - `node_modules` - 依赖包（Vercel 会重新安装）
 - `docs` - 文档文件
 - `.env.local`, `.env.development` - 本地环境变量
@@ -77,6 +79,7 @@ vercel login
 选择登录方式：
 
 **推荐：使用 GitHub 登录**
+
 ```
 ? Log in to Vercel
 > Continue with GitHub
@@ -112,10 +115,11 @@ vercel
 ```
 
 **特点：**
+
 - ✅ 独立的预览 URL（例如：`project-abc123.vercel.app`）
 - ✅ 适合测试新功能
 - ✅ 不影响生产环境
-- ✅ 自动过期（30天后）
+- ✅ 自动过期（30 天后）
 
 ### Production（生产部署）
 
@@ -126,6 +130,7 @@ vercel --prod
 ```
 
 **特点：**
+
 - ✅ 使用自定义域名（如果已配置）
 - ✅ 默认 URL：`project.vercel.app`
 - ✅ 稳定的生产环境
@@ -260,6 +265,7 @@ vercel rm dpl_abc123
 ### 添加自定义域名
 
 1. **在 Vercel Dashboard 中添加：**
+
    - 进入项目 → Settings → Domains
    - 输入域名（例如：`app.example.com`）
    - 按照提示配置 DNS
@@ -272,11 +278,13 @@ vercel rm dpl_abc123
 ### DNS 配置
 
 **方法 1: CNAME（推荐）**
+
 ```
 app.example.com  CNAME  cname.vercel-dns.com
 ```
 
 **方法 2: A Record**
+
 ```
 app.example.com  A  76.76.21.21
 ```
@@ -305,6 +313,7 @@ vercel dev --listen 3000
 ```
 
 **特点：**
+
 - ✅ 模拟 Vercel 生产环境
 - ✅ 自动加载环境变量
 - ✅ 支持 Serverless Functions
@@ -335,6 +344,7 @@ vercel dev --listen 3000
 ### Edge Network
 
 Vercel 自动使用全球 CDN：
+
 - ✅ 自动缓存静态资源
 - ✅ Brotli 压缩
 - ✅ HTTP/2 推送
@@ -343,6 +353,7 @@ Vercel 自动使用全球 CDN：
 ### 性能监控
 
 在 Vercel Dashboard 查看：
+
 - **Analytics** - 访问统计
 - **Speed Insights** - 性能指标（需启用）
 - **Logs** - 错误日志
@@ -385,10 +396,12 @@ yarn build:prod
 **4. 构建超时**
 
 Vercel 免费版构建限制：
+
 - 构建时间：10 分钟
 - 输出大小：100 MB
 
 优化建议：
+
 - 使用 `.vercelignore` 减少上传文件
 - 优化依赖（移除未使用的包）
 - 使用构建缓存
@@ -436,7 +449,7 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID }}
           vercel-project-id: ${{ secrets.PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: "--prod"
 ```
 
 ### 获取 Vercel Token
@@ -459,18 +472,22 @@ vercel project ls
 ## 💡 最佳实践
 
 1. **使用预览部署测试**
+
    - 每次修改先部署到 Preview
    - 测试通过后再部署到 Production
 
 2. **合理使用环境变量**
+
    - 敏感信息（API keys）只在 Vercel Dashboard 配置
    - 不要提交 `.env.local` 到代码库
 
 3. **监控部署状态**
+
    - 定期检查 Vercel Dashboard
    - 设置部署通知（邮件/Slack）
 
 4. **优化构建时间**
+
    - 使用 `.vercelignore` 减少上传
    - 启用构建缓存
    - 优化依赖安装
@@ -482,5 +499,4 @@ vercel project ls
 
 ---
 
-**最后更新：** 2026-02-27
-**Vercel CLI 版本：** 50.25.1
+**最后更新：** 2026-02-27 **Vercel CLI 版本：** 50.25.1

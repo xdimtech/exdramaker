@@ -3,6 +3,7 @@
 ## 概述
 
 Visual Debug 是 Excalidraw Recording 功能的调试模式，用于：
+
 - 控制调试日志的输出
 - 显示调试信息面板
 - 显示工具栏位置信息（移动端）
@@ -43,6 +44,7 @@ if (import.meta.env.DEV) {
 启用后，以下日志会在控制台输出：
 
 #### CanvasSlides 日志
+
 ```
 [CanvasSlides] scrollX: 0 scrollY: 0 zoom: 1
 ```
@@ -52,6 +54,7 @@ if (import.meta.env.DEV) {
 #### RecordingToolbar 日志
 
 **初始化日志：**
+
 ```
 [RecordingToolbar useEffect] status: pre-recording, zoom from config: 1.5 isMobile: false widthRatio: 0.7 areaW: 800 firstSlide.width: 533.33
 ```
@@ -59,6 +62,7 @@ if (import.meta.env.DEV) {
 显示录制区域的计算参数。
 
 **位置计算日志：**
+
 ```
 [RecordingToolbar] targetSlideX: 100 targetSlideY: 150
 [RecordingToolbar] Initializing position: { toolbarWidth: 240, toolbarHeight: 48, windowWidth: 1920, windowHeight: 1080, isMobile: false }
@@ -68,6 +72,7 @@ if (import.meta.env.DEV) {
 显示工具栏和幻灯片的位置计算过程。
 
 **录制开始日志：**
+
 ```
 [RecordingToolbar handleBegin] called, slides.length: 3
 ```
@@ -92,6 +97,7 @@ Zoom: 1.5x
 ```
 
 **包含信息：**
+
 - 工具栏位置（屏幕坐标）
 - 当前激活的幻灯片
 - 幻灯片位置（画布坐标）
@@ -133,6 +139,7 @@ delete window.visualDebug;
 **问题：** 幻灯片没有出现在正确的位置
 
 **步骤：**
+
 1. 启用 Visual Debug：`window.visualDebug = true`
 2. 打开录制功能
 3. 查看控制台日志：
@@ -147,6 +154,7 @@ delete window.visualDebug;
 **问题：** 工具栏在移动设备上位置不正确
 
 **步骤：**
+
 1. 启用 Visual Debug
 2. 调整浏览器窗口大小到移动尺寸（宽度 ≤ 768px）
 3. 查看右上角的位置指示器
@@ -161,6 +169,7 @@ delete window.visualDebug;
 **问题：** 录制区域尺寸不符合预期
 
 **步骤：**
+
 1. 启用 Visual Debug
 2. 选择不同的宽高比（9:16, 16:9 等）
 3. 查看控制台日志：
@@ -175,6 +184,7 @@ delete window.visualDebug;
 **问题：** 缩放级别不符合预期
 
 **步骤：**
+
 1. 启用 Visual Debug
 2. 查看控制台日志：
    ```
@@ -188,6 +198,7 @@ delete window.visualDebug;
 ### 何时使用 Visual Debug
 
 ✅ **应该使用：**
+
 - 开发新的录制功能
 - 调试位置计算问题
 - 排查移动端适配问题
@@ -195,6 +206,7 @@ delete window.visualDebug;
 - 进行性能分析
 
 ❌ **不应该使用：**
+
 - 生产环境（永远不要在生产环境启用）
 - 性能测试（日志会影响性能）
 - 用户演示（会显示调试信息）
@@ -202,11 +214,13 @@ delete window.visualDebug;
 ### 最佳实践
 
 1. **开发时默认禁用**
+
    - 默认 `window.visualDebug` 为 `undefined`
    - 需要时手动启用
    - 避免提交启用代码到仓库
 
 2. **使用条件日志**
+
    ```typescript
    if (window.visualDebug) {
      console.log("[Component] Debug info:", data);
@@ -214,6 +228,7 @@ delete window.visualDebug;
    ```
 
 3. **添加有意义的日志标签**
+
    ```typescript
    // ✅ 好的日志
    console.log("[RecordingToolbar handleBegin] slides.length:", slides.length);
@@ -223,12 +238,13 @@ delete window.visualDebug;
    ```
 
 4. **使用结构化日志**
+
    ```typescript
    // ✅ 好的日志
    console.log("[Component] State:", {
      width: 800,
      height: 600,
-     zoom: 1.5
+     zoom: 1.5,
    });
 
    // ❌ 不好的日志
@@ -260,12 +276,14 @@ if (window.visualDebug) {
 ### 日志内容指南
 
 **包含：**
+
 - 关键状态变量
 - 计算的中间结果
 - 用户操作的上下文
 - 条件判断的结果
 
 **不包含：**
+
 - 敏感信息（用户数据、API keys）
 - 完整的对象树（太大）
 - 重复的信息
@@ -280,7 +298,7 @@ if (window.visualDebug) {
 // vite.config.ts
 export default defineConfig({
   define: {
-    'window.visualDebug': false, // 在生产环境强制禁用
+    "window.visualDebug": false, // 在生产环境强制禁用
   },
   // ... other config
 });
@@ -323,7 +341,7 @@ describe("Visual Debug", () => {
 
     expect(consoleLogSpy).toHaveBeenCalledWith(
       expect.stringContaining("[ComponentName]"),
-      expect.any(Object)
+      expect.any(Object),
     );
   });
 });
@@ -340,6 +358,7 @@ describe("Visual Debug", () => {
 ### 优化建议
 
 1. **避免高频日志**
+
    ```typescript
    // ❌ 不好 - 在 useEffect 依赖数组中的高频变化变量
    useEffect(() => {
@@ -362,9 +381,9 @@ describe("Visual Debug", () => {
 
 2. **条件渲染 Debug 面板**
    ```typescript
-   {window.visualDebug && showDebugInfo && (
-     <DebugPanel />
-   )}
+   {
+     window.visualDebug && showDebugInfo && <DebugPanel />;
+   }
    ```
 
 ## 🆘 常见问题
@@ -372,6 +391,7 @@ describe("Visual Debug", () => {
 ### Q: 为什么我看不到日志？
 
 **A:** 确认以下几点：
+
 1. 是否启用了 Visual Debug：`console.log(window.visualDebug)`
 2. 是否打开了浏览器控制台
 3. 控制台是否过滤了日志级别（应该显示 "Info"）
@@ -383,9 +403,9 @@ describe("Visual Debug", () => {
 
 ```typescript
 // vite.config.ts
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   config.define = {
-    'window.visualDebug': false,
+    "window.visualDebug": false,
   };
 }
 ```
@@ -393,6 +413,7 @@ if (process.env.NODE_ENV === 'production') {
 ### Q: 可以在移动端使用吗？
 
 **A:** 可以，但需要：
+
 1. 使用移动设备的调试工具（如 Chrome Remote Debugging）
 2. 或在代码中启用：`window.visualDebug = true`
 3. 查看移动端专属的工具栏位置指示器
@@ -400,6 +421,7 @@ if (process.env.NODE_ENV === 'production') {
 ### Q: 日志太多怎么办？
 
 **A:** 使用浏览器控制台的过滤功能：
+
 1. 在控制台输入框输入 `[RecordingToolbar]` 只显示录制工具栏的日志
 2. 或输入 `-[CanvasSlides]` 排除画布幻灯片的日志
 
@@ -411,8 +433,8 @@ if (process.env.NODE_ENV === 'production') {
 
 ---
 
-**最后更新：** 2026-02-27
-**相关文件：**
+**最后更新：** 2026-02-27 **相关文件：**
+
 - `packages/excalidraw/global.d.ts` - 类型定义
 - `packages/excalidraw/components/CanvasSlides.tsx` - 画布幻灯片日志
 - `packages/excalidraw/components/Recording/RecordingToolbar.tsx` - 录制工具栏日志

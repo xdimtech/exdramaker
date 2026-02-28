@@ -91,13 +91,13 @@ curl -I https://exdramaker.curiopal.cn/assets/index-xxx.js | grep -i cache
 
 ## 缓存策略说明
 
-| 文件类型 | Cache-Control | 说明 |
-|---------|---------------|------|
-| HTML | `no-cache, no-store` | 每次都获取最新版本 |
-| JS/CSS (assets) | `max-age=31536000, immutable` | 1年缓存，文件名有hash |
-| 字体 | `max-age=31536000` | 1年缓存 |
-| 图片 | `max-age=86400` | 1天缓存 |
-| manifest/sitemap | `max-age=3600` | 1小时缓存 |
+| 文件类型         | Cache-Control                 | 说明                    |
+| ---------------- | ----------------------------- | ----------------------- |
+| HTML             | `no-cache, no-store`          | 每次都获取最新版本      |
+| JS/CSS (assets)  | `max-age=31536000, immutable` | 1 年缓存，文件名有 hash |
+| 字体             | `max-age=31536000`            | 1 年缓存                |
+| 图片             | `max-age=86400`               | 1 天缓存                |
+| manifest/sitemap | `max-age=3600`                | 1 小时缓存              |
 
 ## 性能优势
 

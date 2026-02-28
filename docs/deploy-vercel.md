@@ -21,14 +21,17 @@
 Vercel 会自动检测 `vercel.json` 配置，但你需要确认以下设置：
 
 #### Framework Preset
+
 - 选择：**Other**（或不选择框架）
 
 #### Build Settings
+
 - **Build Command**: `yarn build:prod`
 - **Output Directory**: `excalidraw-app/build`
 - **Install Command**: `yarn install`
 
 #### Root Directory
+
 - 保持为默认（项目根目录）
 
 ### 3. 配置环境变量
@@ -82,6 +85,7 @@ VITE_APP_ENABLE_ESLINT=false
 ```
 
 **重要提示**：
+
 - 在 Vercel 中添加环境变量时，每个变量要单独添加
 - Environment: 选择 **Production**（生产环境）
 - 如果需要在预览环境中测试，也要添加到 **Preview** 环境
@@ -150,6 +154,7 @@ Vercel 会自动检测 Git 仓库的变化：
 ### 加速构建
 
 Vercel 已配置：
+
 - 缓存 `node_modules`
 - 使用 `.vercelignore` 排除不必要的文件
 - 区域：新加坡（`sin1`）- 适合亚洲用户
@@ -167,6 +172,7 @@ Vercel 已配置：
 **症状**：构建时间超过 Vercel 免费版限制（约 10 分钟）
 
 **解决方案**：
+
 - 升级到 Vercel Pro 计划
 - 或优化构建流程（减少不必要的依赖）
 
@@ -175,6 +181,7 @@ Vercel 已配置：
 **症状**：应用运行异常，PostHog 未启动
 
 **解决方案**：
+
 - 确认环境变量名称正确（以 `VITE_APP_` 开头）
 - 重新部署（环境变量更改后需要重新部署）
 
@@ -183,6 +190,7 @@ Vercel 已配置：
 **症状**：刷新页面后显示 404
 
 **解决方案**：
+
 - 已在 `vercel.json` 中配置 SPA 路由重写
 - 确认 `rewrites` 配置存在
 
@@ -191,6 +199,7 @@ Vercel 已配置：
 **症状**：页面显示但字体未加载
 
 **解决方案**：
+
 - 检查 `fonts/` 目录是否在构建产物中
 - 确认 CORS 头部配置正确
 
@@ -199,12 +208,14 @@ Vercel 已配置：
 ### CDN 缓存
 
 Vercel 自动配置了 CDN 缓存：
+
 - 静态资源（`/assets/*`, `/fonts/*`）：1 年缓存
 - HTML：无缓存（实时更新）
 
 ### 安全头部
 
 已配置的安全头部：
+
 - `X-Content-Type-Options: nosniff`
 - `X-Frame-Options: SAMEORIGIN`
 - `X-XSS-Protection: 1; mode=block`
@@ -229,12 +240,14 @@ vercel logs [deployment-url]
 ### Analytics
 
 Vercel 提供免费的 Web Analytics：
+
 1. Vercel Dashboard → Analytics
 2. 查看访问量、性能指标
 
 ## 成本估算
 
 **免费版限制**：
+
 - 100 GB 带宽/月
 - 100 次部署/天
 - 6000 分钟构建时间/月
