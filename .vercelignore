@@ -45,6 +45,8 @@ scripts/quick*.sh
 .git
 .gitignore
 
-# Environment files (will be set in Vercel dashboard)
+# Environment files
+# Note: .env.production is NEEDED for Vercel build
 .env.local
 .env.development
+!.env.production
