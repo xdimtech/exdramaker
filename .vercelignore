@@ -6,6 +6,10 @@ node_modules
 packages/*/dist
 excalidraw-app/.vite
 
+# Backend services (not needed for frontend deployment)
+payment-service/
+configs/nginx/
+
 # Development files
 .vscode
 .idea
@@ -34,6 +38,8 @@ docker-compose*.yml
 
 # Scripts (except build scripts)
 scripts/deploy*.sh
+scripts/diagnose*.sh
+scripts/quick*.sh
 
 # Git
 .git
