@@ -6,11 +6,37 @@ import {
   teleprompterTextAtom,
 } from "../../recording/recordingState";
 import { t } from "../../i18n";
-import { file as fileIcon } from "../icons";
 
 import "./Teleprompter.scss";
 
 import type { TeleprompterConfig } from "../../recording/recordingState";
+
+const TELEPROMPTER_STORAGE_KEY = "excalidraw-teleprompter-data";
+const TELEPROMPTER_CONFIG_KEY = "excalidraw-teleprompter-config";
+
+// Load saved data from localStorage
+const loadSavedText = (): string => {
+  try {
+    const saved = localStorage.getItem(TELEPROMPTER_STORAGE_KEY);
+    return saved || "";
+  } catch (error) {
+    console.warn("Failed to load teleprompter text:", error);
+    return "";
+  }
+};
+
+const loadSavedConfig = (): Partial<TeleprompterConfig> | null => {
+  try {
+    const saved = localStorage.getItem(TELEPROMPTER_CONFIG_KEY);
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return null;
+  } catch (error) {
+    console.warn("Failed to load teleprompter config:", error);
+    return null;
+  }
+};
 
 export const Teleprompter = () => {
   const [config, setConfig] = useAtom(teleprompterConfigAtom);
@@ -24,13 +50,121 @@ export const Teleprompter = () => {
   const lastTimestampRef = useRef<number | null>(null);
   const animFrameRef = useRef<number>(0);
   const scrollSpeedRef = useRef(config.scrollSpeed);
+  const scrollAccumulatorRef = useRef<number>(0); // Accumulator for sub-pixel scrolling
   scrollSpeedRef.current = config.scrollSpeed;
+
+  // Load saved text and config on mount
+  useEffect(() => {
+    const savedText = loadSavedText();
+    const savedConfig = loadSavedConfig();
+
+    if (savedText) {
+      setText(savedText);
+    }
+
+    if (savedConfig) {
+      setConfig((prev) => ({
+        ...prev,
+        ...savedConfig,
+        // Don't restore visibility and position, only user preferences
+        visible: prev.visible,
+        position: prev.position,
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
+
+  // Save text to localStorage with debounce
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      try {
+        if (text) {
+          localStorage.setItem(TELEPROMPTER_STORAGE_KEY, text);
+        } else {
+          localStorage.removeItem(TELEPROMPTER_STORAGE_KEY);
+        }
+      } catch (error) {
+        console.warn("Failed to save teleprompter text:", error);
+      }
+    }, 500); // Debounce 500ms
+
+    return () => clearTimeout(timeoutId);
+  }, [text]);
+
+  // Save config to localStorage with debounce
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      try {
+        const configToSave = {
+          opacity: config.opacity,
+          scrollSpeed: config.scrollSpeed,
+          fontSize: config.fontSize,
+          letterSpacing: config.letterSpacing,
+          lineHeight: config.lineHeight,
+          controlsCollapsed: config.controlsCollapsed,
+          fontColor: config.fontColor,
+        };
+        localStorage.setItem(
+          TELEPROMPTER_CONFIG_KEY,
+          JSON.stringify(configToSave),
+        );
+      } catch (error) {
+        console.warn("Failed to save teleprompter config:", error);
+      }
+    }, 500); // Debounce 500ms
+
+    return () => clearTimeout(timeoutId);
+  }, [
+    config.opacity,
+    config.scrollSpeed,
+    config.fontSize,
+    config.letterSpacing,
+    config.lineHeight,
+    config.controlsCollapsed,
+    config.fontColor,
+  ]);
+
+  // Center teleprompter on first display and adjust size based on window
+  const hasBeenCenteredRef = useRef(false);
+  useEffect(() => {
+    if (config.visible && !hasBeenCenteredRef.current) {
+      hasBeenCenteredRef.current = true;
+
+      // Calculate responsive width with proper margins
+      const isMobile = window.innerWidth <= 768;
+      const horizontalMargin = isMobile ? 32 : 80; // 16px or 40px on each side
+      const maxWidth = Math.min(
+        window.innerWidth - horizontalMargin,
+        isMobile ? 600 : 800, // Max width cap
+      );
+
+      // Use calculated width or keep current if already customized
+      const width = config.size.width === 400 ? maxWidth : config.size.width;
+      const height = config.size.height;
+
+      const centerX = (window.innerWidth - width) / 2;
+      const centerY = (window.innerHeight - height) / 2;
+
+      setConfig((prev) => ({
+        ...prev,
+        size: {
+          width,
+          height,
+        },
+        position: {
+          x: centerX,
+          y: centerY,
+        },
+      }));
+    }
+  }, [config.visible, config.size.width, config.size.height, setConfig]);
 
   // Delta-time based auto-scroll animation
   useEffect(() => {
     if (!config.visible || !isPlaying) {
       cancelAnimationFrame(animFrameRef.current);
       lastTimestampRef.current = null;
+      scrollAccumulatorRef.current = 0; // Reset accumulator when stopped
       return;
     }
 
@@ -45,14 +179,26 @@ export const Teleprompter = () => {
         const maxScroll =
           contentRef.current.scrollHeight - contentRef.current.clientHeight;
         if (maxScroll > 0) {
-          const newScroll = Math.min(
-            contentRef.current.scrollTop + delta * scrollSpeedRef.current,
-            maxScroll,
-          );
-          contentRef.current.scrollTop = newScroll;
-          if (newScroll >= maxScroll) {
-            setIsPlaying(false);
-            return;
+          // Accumulate scroll amount including fractional pixels
+          scrollAccumulatorRef.current += delta * scrollSpeedRef.current;
+
+          // Only update scrollTop when we have at least 0.1 pixels to scroll
+          if (Math.abs(scrollAccumulatorRef.current) >= 0.1) {
+            const scrollAmount =
+              Math.floor(scrollAccumulatorRef.current * 10) / 10; // Round to 1 decimal
+            const newScroll = Math.min(
+              contentRef.current.scrollTop + scrollAmount,
+              maxScroll,
+            );
+            contentRef.current.scrollTop = newScroll;
+
+            // Keep the remainder for next frame
+            scrollAccumulatorRef.current -= scrollAmount;
+
+            if (newScroll >= maxScroll) {
+              setIsPlaying(false);
+              return;
+            }
           }
         }
       }
@@ -65,29 +211,34 @@ export const Teleprompter = () => {
     return () => {
       cancelAnimationFrame(animFrameRef.current);
       lastTimestampRef.current = null;
+      scrollAccumulatorRef.current = 0;
     };
   }, [config.visible, isPlaying]);
 
-  const handleHeaderMouseDown = (e: React.MouseEvent) => {
+  const handleHeaderPointerDown = (e: React.PointerEvent) => {
     if ((e.target as HTMLElement).closest("button")) {
       return;
     }
+    e.preventDefault();
+    // Capture pointer to ensure we receive all subsequent pointer events
+    e.currentTarget.setPointerCapture(e.pointerId);
     setIsDragging(true);
     setDragOffset({
       x: e.clientX - config.position.x,
       y: e.clientY - config.position.y,
     });
-    e.preventDefault();
   };
 
-  const handleResizerMouseDown = (e: React.MouseEvent) => {
-    setIsResizing(true);
+  const handleResizerPointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    // Capture pointer to ensure we receive all subsequent pointer events
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    setIsResizing(true);
   };
 
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
+  const handlePointerMove = useCallback(
+    (e: PointerEvent) => {
       if (isDragging) {
         setConfig((prev) => ({
           ...prev,
@@ -109,21 +260,35 @@ export const Teleprompter = () => {
     [isDragging, isResizing, dragOffset, setConfig],
   );
 
-  const handleMouseUp = useCallback(() => {
+  const handlePointerUp = useCallback(() => {
+    setIsDragging(false);
+    setIsResizing(false);
+  }, []);
+
+  const handlePointerCancel = useCallback(() => {
+    // Handle pointer cancellation (e.g., phone call, orientation change)
     setIsDragging(false);
     setIsResizing(false);
   }, []);
 
   useEffect(() => {
     if (isDragging || isResizing) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("pointermove", handlePointerMove);
+      window.addEventListener("pointerup", handlePointerUp);
+      window.addEventListener("pointercancel", handlePointerCancel);
       return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
+        window.removeEventListener("pointermove", handlePointerMove);
+        window.removeEventListener("pointerup", handlePointerUp);
+        window.removeEventListener("pointercancel", handlePointerCancel);
       };
     }
-  }, [isDragging, isResizing, handleMouseMove, handleMouseUp]);
+  }, [
+    isDragging,
+    isResizing,
+    handlePointerMove,
+    handlePointerUp,
+    handlePointerCancel,
+  ]);
 
   const updateConfig = useCallback(
     (updates: Partial<TeleprompterConfig>) => {
@@ -143,9 +308,20 @@ export const Teleprompter = () => {
         contentRef.current.scrollHeight - contentRef.current.clientHeight;
       if (maxScroll <= 0 || contentRef.current.scrollTop >= maxScroll - 1) {
         contentRef.current.scrollTop = 0;
+        scrollAccumulatorRef.current = 0; // Reset accumulator when restarting
       }
     }
     setIsPlaying((prev) => !prev);
+  };
+
+  const handleToggleSettings = () => {
+    updateConfig({ controlsCollapsed: !config.controlsCollapsed });
+  };
+
+  // Prevent wheel events from bubbling to canvas when scrolling inside teleprompter
+  const handleWheel = (e: React.WheelEvent) => {
+    // Stop propagation to prevent canvas from scrolling
+    e.stopPropagation();
   };
 
   if (!config.visible) {
@@ -162,33 +338,22 @@ export const Teleprompter = () => {
         height: config.size.height,
         opacity: config.opacity,
       }}
+      onWheel={handleWheel}
     >
-      {/* Header — drag from here */}
-      <div className="Teleprompter__header" onMouseDown={handleHeaderMouseDown}>
-        <div className="Teleprompter__title-area">
-          <span className="Teleprompter__title-icon">{fileIcon}</span>
-          <span className="Teleprompter__title">
-            {t("recording.teleprompter.title" as any)}
-          </span>
-        </div>
+      {/* Header — simplified with play button and settings icon */}
+      <div
+        className="Teleprompter__header"
+        onPointerDown={handleHeaderPointerDown}
+      >
         <button
           type="button"
-          className="Teleprompter__close"
-          onClick={handleClose}
-          title={t("recording.teleprompter.close" as any)}
-        >
-          ✕
-        </button>
-      </div>
-
-      {/* Controls row: play button + sliders on one line */}
-      <div className="Teleprompter__controls">
-        <button
-          type="button"
-          className={`Teleprompter__play-button ${
-            isPlaying ? "Teleprompter__play-button--playing" : ""
+          className={`Teleprompter__header-play-button ${
+            isPlaying ? "Teleprompter__header-play-button--playing" : ""
           }`}
-          onClick={handlePlayPause}
+          onClick={(e) => {
+            e.stopPropagation();
+            handlePlayPause();
+          }}
           title={
             isPlaying
               ? (t("recording.teleprompter.pause" as any) as string)
@@ -196,10 +361,9 @@ export const Teleprompter = () => {
           }
         >
           {isPlaying ? (
-            // Pause: two vertical bars — precisely centered in the button
             <svg
-              width="10"
-              height="12"
+              width="9"
+              height="11"
               viewBox="0 0 10 12"
               fill="currentColor"
               aria-hidden="true"
@@ -208,11 +372,9 @@ export const Teleprompter = () => {
               <rect x="6.5" y="0" width="3.5" height="12" rx="1" />
             </svg>
           ) : (
-            // Play: triangle — shifted 1px right for optical centering of the
-            // visual mass (triangle is bottom-heavy; aligning centroid, not bbox)
             <svg
-              width="10"
-              height="12"
+              width="9"
+              height="11"
               viewBox="0 0 10 12"
               fill="currentColor"
               aria-hidden="true"
@@ -222,34 +384,140 @@ export const Teleprompter = () => {
             </svg>
           )}
         </button>
-
-        <div className="Teleprompter__sliders">
-          <div className="Teleprompter__slider-row">
-            <label>{t("recording.teleprompter.scrollSpeed" as any)}</label>
-            <input
-              type="range"
-              min={10}
-              max={200}
-              value={config.scrollSpeed}
-              onChange={(e) =>
-                updateConfig({ scrollSpeed: parseInt(e.target.value) })
-              }
-            />
-          </div>
-          <div className="Teleprompter__slider-row">
-            <label>{t("recording.teleprompter.opacity" as any)}</label>
-            <input
-              type="range"
-              min={20}
-              max={100}
-              value={config.opacity * 100}
-              onChange={(e) =>
-                updateConfig({ opacity: parseInt(e.target.value) / 100 })
-              }
-            />
-          </div>
+        <div className="Teleprompter__header-actions">
+          <button
+            type="button"
+            className="Teleprompter__settings-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleToggleSettings();
+            }}
+            title={config.controlsCollapsed ? "Show settings" : "Hide settings"}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            className="Teleprompter__close"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClose();
+            }}
+            title={t("recording.teleprompter.close" as any)}
+          >
+            ✕
+          </button>
         </div>
       </div>
+
+      {/* Settings panel - toggle via settings button */}
+      {!config.controlsCollapsed && (
+        <div className="Teleprompter__settings">
+          <div className="Teleprompter__settings-grid">
+            <div className="Teleprompter__setting-item">
+              <label>Scroll Speed</label>
+              <input
+                type="range"
+                min={10}
+                max={200}
+                value={config.scrollSpeed}
+                onChange={(e) =>
+                  updateConfig({ scrollSpeed: parseInt(e.target.value) })
+                }
+              />
+            </div>
+            <div className="Teleprompter__setting-item">
+              <label>Font Size</label>
+              <input
+                type="range"
+                min={12}
+                max={48}
+                value={config.fontSize}
+                onChange={(e) =>
+                  updateConfig({ fontSize: parseInt(e.target.value) })
+                }
+              />
+            </div>
+            <div className="Teleprompter__setting-item">
+              <label>Letter Spacing</label>
+              <input
+                type="range"
+                min={-0.05}
+                max={0.2}
+                step={0.01}
+                value={config.letterSpacing}
+                onChange={(e) =>
+                  updateConfig({ letterSpacing: parseFloat(e.target.value) })
+                }
+              />
+            </div>
+            <div className="Teleprompter__setting-item">
+              <label>Line Height</label>
+              <input
+                type="range"
+                min={1.0}
+                max={2.5}
+                step={0.1}
+                value={config.lineHeight}
+                onChange={(e) =>
+                  updateConfig({ lineHeight: parseFloat(e.target.value) })
+                }
+              />
+            </div>
+            <div className="Teleprompter__setting-item">
+              <label>Opacity</label>
+              <input
+                type="range"
+                min={20}
+                max={100}
+                value={config.opacity * 100}
+                onChange={(e) =>
+                  updateConfig({ opacity: parseInt(e.target.value) / 100 })
+                }
+              />
+            </div>
+            <div className="Teleprompter__setting-item">
+              <label>Text Color</label>
+              <div className="Teleprompter__color-picker">
+                {[
+                  { color: "#000000", label: "Black" },
+                  { color: "#334155", label: "Slate" },
+                  { color: "#1e3a8a", label: "Blue" },
+                  { color: "#166534", label: "Green" },
+                  { color: "#7f1d1d", label: "Red" },
+                  { color: "#ffffff", label: "White" },
+                ].map(({ color, label }) => (
+                  <button
+                    key={color}
+                    type="button"
+                    className={`Teleprompter__color-swatch ${
+                      config.fontColor === color
+                        ? "Teleprompter__color-swatch--active"
+                        : ""
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => updateConfig({ fontColor: color })}
+                    title={label}
+                    aria-label={`Select ${label} color`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Content area — flex column; overflow switches per mode:
           edit: hidden (textarea scrolls itself)
@@ -262,7 +530,12 @@ export const Teleprompter = () => {
         {isPlaying ? (
           <div
             className="Teleprompter__text"
-            style={{ fontSize: config.fontSize }}
+            style={{
+              fontSize: config.fontSize,
+              letterSpacing: `${config.letterSpacing}em`,
+              lineHeight: config.lineHeight,
+              color: config.fontColor,
+            }}
           >
             {text || (
               <span className="Teleprompter__placeholder">
@@ -276,7 +549,12 @@ export const Teleprompter = () => {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={t("recording.teleprompter.placeholder" as any)}
-            style={{ fontSize: config.fontSize }}
+            style={{
+              fontSize: config.fontSize,
+              letterSpacing: `${config.letterSpacing}em`,
+              lineHeight: config.lineHeight,
+              color: config.fontColor,
+            }}
           />
         )}
         {!isPlaying && (
@@ -289,7 +567,7 @@ export const Teleprompter = () => {
       {/* Resize handle */}
       <div
         className="Teleprompter__resizer"
-        onMouseDown={handleResizerMouseDown}
+        onPointerDown={handleResizerPointerDown}
       />
     </div>
   );

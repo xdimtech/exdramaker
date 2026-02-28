@@ -23,6 +23,10 @@
   min-width: 300px;
   min-height: 200px;
 
+  // Prevent touch gestures from interfering with dragging on mobile
+  touch-action: none;
+  user-select: none;
+
   // system-ui resolves to SF Pro on macOS, Segoe UI Variable on Win 11,
   // and the native system font on other platforms — all better hinted than Roboto
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -50,93 +54,26 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 11px 14px 11px 16px;
+    padding: 6px 10px; // Reduced from 8px 12px
     cursor: move;
-    user-select: none;
     flex-shrink: 0;
     border-radius: 12px 12px 0 0;
+    background: rgba(71, 85, 105, 0.02);
+    border-bottom: 1px solid rgba(71, 85, 105, 0.08);
 
     &:active {
       cursor: grabbing;
     }
   }
 
-  &__title-area {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  &__title-icon {
-    display: flex;
-    align-items: center;
-    color: #94a3b8; // slate-400 — unobtrusive icon tint
-    flex-shrink: 0;
-
-    svg {
-      width: 13px;
-      height: 13px;
-    }
-  }
-
-  &__title {
-    font-size: 13px;
-    font-weight: 500; // Medium — less heavy than semibold
-    color: #1e293b; // slate-800 — just dark enough for clear hierarchy
-    letter-spacing: 0.15px;
-  }
-
-  &__close {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    border-radius: 6px;
-    color: #94a3b8; // slate-400 — quiet default state
-    cursor: pointer;
-    font-size: 13px;
-    transition: background 0.15s ease, color 0.15s ease;
-    flex-shrink: 0;
-
-    &:hover {
-      background: rgba(71, 85, 105, 0.08); // slate-600 tint
-      color: #475569; // slate-600
-    }
-
-    &:active {
-      background: rgba(71, 85, 105, 0.14);
-    }
-  }
-
-  // ── Controls row ─────────────────────────────────────────────────────────────
-  &__controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
-    margin: 0 16px 10px;
-    background: rgba(71, 85, 105, 0.04); // barely-there slate tint
-    border-radius: 8px;
-    flex-shrink: 0;
-    transition: background 0.15s ease;
-
-    &:hover {
-      background: rgba(71, 85, 105, 0.07);
-    }
-  }
-
-  &__play-button {
-    width: 30px;
-    height: 30px;
+  &__header-play-button {
+    width: 28px; // Reduced from 32px
+    height: 28px;
     flex-shrink: 0;
     border-radius: 50%;
     border: 1.5px solid rgba(71, 85, 105, 0.18);
     background: #ffffff;
-    color: #475569; // slate-600 — softer than #333
-    font-size: 11px;
+    color: #475569;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -145,8 +82,13 @@
       box-shadow 0.15s ease, transform 0.1s ease;
     box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
 
+    svg {
+      width: 9px; // Reduced from 10px
+      height: 11px; // Reduced from 12px
+    }
+
     &:hover {
-      background: #f8fafc; // slate-50
+      background: #f8fafc;
       border-color: rgba(71, 85, 105, 0.28);
       box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
       transform: scale(1.08);
@@ -158,35 +100,93 @@
     }
 
     &--playing {
-      background: #f1f5f9; // slate-100
+      background: #f1f5f9;
       border-color: rgba(71, 85, 105, 0.2);
     }
   }
 
-  &__sliders {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  &__slider-row {
+  &__header-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
+  }
+
+  &__settings-button,
+  &__close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      background: rgba(71, 85, 105, 0.08);
+      color: #475569;
+    }
+
+    &:active {
+      background: rgba(71, 85, 105, 0.14);
+    }
+  }
+
+  &__settings-button {
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &__close {
+    font-size: 14px;
+  }
+
+  // ── Settings panel ──────────────────────────────────────────────────────────
+  &__settings {
+    flex-shrink: 0;
+    padding: 10px 14px; // Slightly more compact
+    background: rgba(71, 85, 105, 0.03);
+    border-bottom: 1px solid rgba(71, 85, 105, 0.08);
+  }
+
+  &__settings-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; // Reduced from 12px
+  }
+
+  &__setting-item {
+    display: flex;
+    flex-direction: row; // Changed from column to row
+    align-items: center;
+    gap: 12px;
 
     label {
-      width: 52px;
+      width: 90px; // Fixed width for alignment
       flex-shrink: 0;
       font-size: 11px;
-      color: #64748b; // slate-500
+      font-weight: 500;
+      color: #64748b;
+      letter-spacing: 0.3px;
       user-select: none;
-      letter-spacing: 0.2px;
+      text-align: right;
+
+      // On mobile, make it more compact
+      @media (max-width: 450px) {
+        width: 70px;
+        font-size: 10px;
+      }
     }
 
     input[type="range"] {
-      flex: 1;
-      height: 3px;
+      flex: 1; // Take remaining space
+      height: 4px;
       -webkit-appearance: none;
       appearance: none;
       background: rgba(71, 85, 105, 0.14);
@@ -202,10 +202,10 @@
       &::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
-        width: 13px;
-        height: 13px;
+        width: 14px;
+        height: 14px;
         border-radius: 50%;
-        background: #475569; // slate-600
+        background: #475569;
         cursor: pointer;
         box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
         transition: transform 0.1s ease, background 0.1s ease;
@@ -213,18 +213,50 @@
 
       &:hover::-webkit-slider-thumb {
         transform: scale(1.15);
-        background: #334155; // slate-700
+        background: #334155;
       }
 
       &::-moz-range-thumb {
-        width: 13px;
-        height: 13px;
+        width: 14px;
+        height: 14px;
         border-radius: 50%;
-        background: #475569; // slate-600
+        background: #475569;
         cursor: pointer;
         border: none;
         box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
       }
+    }
+  }
+
+  &__color-picker {
+    flex: 1;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  &__color-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid rgba(71, 85, 105, 0.2);
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease,
+      box-shadow 0.15s ease;
+    background: none;
+    padding: 0;
+    flex-shrink: 0;
+
+    &:hover {
+      transform: scale(1.15);
+      border-color: rgba(71, 85, 105, 0.4);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+    }
+
+    &--active {
+      border-color: #475569;
+      border-width: 3px;
+      box-shadow: 0 0 0 2px rgba(71, 85, 105, 0.1);
     }
   }
 
@@ -237,6 +269,8 @@
     flex-direction: column;
     overflow: hidden;
     padding: 0 16px; // matches header horizontal padding
+    // Allow touch interactions within content area (scrolling, text selection)
+    touch-action: auto;
   }
 
   // Textarea — all !important overrides are required to beat the global rule:
@@ -250,8 +284,7 @@
     border-radius: 0 !important;
     box-shadow: none !important;
     outline: none !important;
-    // slate-700 — same as body text, overrides var(--text-primary-color)
-    color: #334155 !important;
+    // Color is now controlled via inline style for customization
     font-family: inherit !important;
     font-size: 15px; // slightly larger than chrome for comfortable reading
     line-height: 1.75;
@@ -260,6 +293,9 @@
     overflow-y: auto;
     padding: 10px 0 8px !important; // global rule sets 0.75rem all sides
     white-space: pre-wrap !important; // global rule sets nowrap
+    // Allow text selection
+    user-select: text;
+    -webkit-user-select: text;
 
     &::placeholder {
       color: #cbd5e1; // slate-300 — subtle, not distracting
@@ -282,13 +318,16 @@
   // Play-mode text — flex-shrink:0 so container scrolls over it
   &__text {
     flex-shrink: 0;
-    color: #334155; // slate-700
+    // Color is now controlled via inline style for customization
     font-size: 15px;
     line-height: 1.75;
     letter-spacing: 0.01em;
     white-space: pre-wrap;
     word-break: break-word;
     padding: 10px 0 8px;
+    // Allow text selection in play mode
+    user-select: text;
+    -webkit-user-select: text;
   }
 
   &__placeholder {

@@ -24,6 +24,10 @@ export interface TeleprompterConfig {
   opacity: number;
   scrollSpeed: number; // pixels per second
   fontSize: number;
+  letterSpacing: number; // em units
+  lineHeight: number; // unitless multiplier
+  controlsCollapsed: boolean; // controls折叠状态
+  fontColor: string; // text color for better readability
 }
 
 export const teleprompterConfigAtom = atom<TeleprompterConfig>({
@@ -33,6 +37,10 @@ export const teleprompterConfigAtom = atom<TeleprompterConfig>({
   opacity: 0.9,
   scrollSpeed: 30,
   fontSize: 24,
+  letterSpacing: 0, // normal
+  lineHeight: 1.5, // 1.5x line height
+  controlsCollapsed: true, // Default to collapsed for cleaner UI
+  fontColor: "#334155", // slate-700 - default readable color
 });
 
 export const teleprompterTextAtom = atom<string>("");
