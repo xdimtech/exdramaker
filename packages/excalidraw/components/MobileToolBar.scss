@@ -34,6 +34,11 @@
       &:hover {
         background-color: transparent;
       }
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+      }
     }
 
     &.active {
@@ -42,11 +47,6 @@
         var(--island-bg-color)
       );
       border-color: var(--button-active-border, var(--color-primary-darkest));
-    }
-
-    svg {
-      width: 1rem;
-      height: 1rem;
     }
   }
 

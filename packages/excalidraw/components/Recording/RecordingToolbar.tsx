@@ -268,11 +268,19 @@ export const RecordingToolbar = () => {
       dragOffsetRef.current = null;
     };
 
+    const handleCancel = () => {
+      // Handle pointer cancellation (e.g., phone call, orientation change)
+      setIsDragging(false);
+      dragOffsetRef.current = null;
+    };
+
     window.addEventListener("pointermove", handleMove);
     window.addEventListener("pointerup", handleUp);
+    window.addEventListener("pointercancel", handleCancel);
     return () => {
       window.removeEventListener("pointermove", handleMove);
       window.removeEventListener("pointerup", handleUp);
+      window.removeEventListener("pointercancel", handleCancel);
     };
   }, [isDragging]);
 
@@ -290,6 +298,10 @@ export const RecordingToolbar = () => {
     if ((event.target as HTMLElement).closest("button")) {
       return;
     }
+    // Prevent default touch behaviors (context menu, text selection, scrolling)
+    event.preventDefault();
+    // Capture pointer to ensure we receive all subsequent pointer events
+    event.currentTarget.setPointerCapture(event.pointerId);
     dragOffsetRef.current = {
       x: event.clientX - toolbarPosition.x,
       y: event.clientY - toolbarPosition.y,
