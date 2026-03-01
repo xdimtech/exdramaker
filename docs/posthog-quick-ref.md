@@ -21,7 +21,7 @@ import { PostHogProvider } from "@posthog/react";
 // 使用 PostHogProvider 包裹应用
 <PostHogProvider apiKey={key} options={options}>
   <ExcalidrawApp />
-</PostHogProvider>
+</PostHogProvider>;
 ```
 
 ### 2. Provider 实现 (`packages/excalidraw/analytics/providers/posthog.ts`)

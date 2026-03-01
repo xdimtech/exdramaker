@@ -5,6 +5,7 @@
 PostHog 默认**仅在生产环境加载**，以避免开发环境产生大量测试数据。
 
 检查结果：
+
 ```
 ✅ PostHog loaded: false  ← PostHog 未加载
 Environment: development   ← 开发环境
@@ -50,10 +51,11 @@ yarn start
 ### 步骤 4: 再次检查
 
 ```js
-window.posthogTest.checkStatus()
+window.posthogTest.checkStatus();
 ```
 
 **预期输出：**
+
 ```
 ✅ PostHog loaded: true  ← 现在应该是 true
 Environment: development
@@ -69,8 +71,7 @@ VITE_APP_POSTHOG_DEBUG: true
 ```ts
 // ❌ 只在生产环境启用
 const shouldEnablePostHog =
-  import.meta.env.PROD &&
-  import.meta.env.VITE_APP_POSTHOG_ENABLED === "true";
+  import.meta.env.PROD && import.meta.env.VITE_APP_POSTHOG_ENABLED === "true";
 ```
 
 ### 修改后（生产 + 调试模式）
@@ -84,6 +85,7 @@ const shouldEnablePostHog =
 ```
 
 **启用条件：**
+
 - ✅ 有 API Key
 - ✅ `VITE_APP_POSTHOG_ENABLED=true`
 - ✅ **生产环境** 或 **调试模式开启**
@@ -96,19 +98,20 @@ const shouldEnablePostHog =
 
 ```js
 // 应该看到初始化日志
-console.log(window.posthog)  // 应该是对象，不是 undefined
+console.log(window.posthog); // 应该是对象，不是 undefined
 
 // 检查加载状态
-posthog.__loaded  // 应该为 true
+posthog.__loaded; // 应该为 true
 ```
 
 ### 2. 发送测试事件
 
 ```js
-window.posthogTest.sendTest()
+window.posthogTest.sendTest();
 ```
 
 **预期输出：**
+
 ```
 🧪 Sending Test Event
 Event Name: posthog_test_event
@@ -125,10 +128,11 @@ Event Name: posthog_test_event
 ### 4. 模拟真实操作
 
 ```js
-window.posthogTest.simulateUserEvents()
+window.posthogTest.simulateUserEvents();
 ```
 
 应该看到：
+
 - `export:png`
 - `element:create`
 - `clipboard:copy`
@@ -142,6 +146,7 @@ window.posthogTest.simulateUserEvents()
 ### Q1: 重启后还是 `PostHog loaded: false`
 
 **检查：**
+
 ```bash
 # 1. 确认环境变量文件
 cat .env.development | grep POSTHOG
@@ -153,6 +158,7 @@ VITE_APP_POSTHOG_KEY=phc_...
 ```
 
 **如果没有 `VITE_APP_POSTHOG_DEBUG=true`：**
+
 ```bash
 echo "VITE_APP_POSTHOG_DEBUG=true" >> .env.development
 yarn start
@@ -161,6 +167,7 @@ yarn start
 ### Q2: 看到 "PostHog loaded: true" 但事件不发送
 
 **检查：**
+
 ```js
 // 查看 analytics 日志
 // 应该看到：
@@ -168,12 +175,14 @@ yarn start
 ```
 
 **如果没看到：**
+
 - 确认 `VITE_APP_ENABLE_TRACKING=true`
 - 确认事件类别在允许列表中（见下方）
 
 ### Q3: 某些事件不发送
 
 **允许的事件类别：**
+
 ```ts
 // packages/excalidraw/analytics.ts
 const ALLOWED_CATEGORIES_TO_TRACK = new Set([
@@ -189,12 +198,13 @@ const ALLOWED_CATEGORIES_TO_TRACK = new Set([
 ```
 
 **测试允许的事件：**
+
 ```js
 // ✅ 会发送
-posthog.capture('export:png', { category: 'export', action: 'png' })
+posthog.capture("export:png", { category: "export", action: "png" });
 
 // ❌ 不会发送（category 不在列表中）
-posthog.capture('unknown:action', { category: 'unknown' })
+posthog.capture("unknown:action", { category: "unknown" });
 ```
 
 ---
@@ -232,10 +242,11 @@ yarn start
 ### 运行状态检查：
 
 ```js
-window.posthogTest.checkStatus()
+window.posthogTest.checkStatus();
 ```
 
 **成功输出：**
+
 ```
 🔍 PostHog Status Check
 ✅ PostHog loaded: true          ← 现在是 true！
@@ -272,11 +283,13 @@ yarn start:production
 ## 🎉 完成
 
 完成以上步骤后：
+
 - ✅ PostHog 在开发环境加载
 - ✅ 可以实时测试事件
 - ✅ 可以在 PostHog Dashboard 查看数据
 - ✅ 不影响生产环境配置
 
 **开发完成后记得：**
+
 - 关闭调试模式：`VITE_APP_POSTHOG_DEBUG=false`
 - 或在生产环境测试（自动禁用调试数据）

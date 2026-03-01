@@ -11,6 +11,7 @@
 ### 当前配置问题
 
 **`.env.production` 中：**
+
 ```bash
 VITE_APP_ENABLE_TRACKING=false  # ❌ 总开关关闭！
 VITE_APP_POSTHOG_ENABLED=true
@@ -19,6 +20,7 @@ VITE_APP_POSTHOG_ENABLED=true
 ### ✅ 解决方案
 
 **修改 `.env.production`：**
+
 ```bash
 VITE_APP_ENABLE_TRACKING=true   # ✅ 开启总开关
 VITE_APP_POSTHOG_ENABLED=true
@@ -33,16 +35,18 @@ VITE_APP_POSTHOG_HOST=https://us.i.posthog.com
 ### 当前代码逻辑
 
 `packages/excalidraw/analytics.ts:60-63`：
+
 ```ts
 if (isDevEnv()) {
   // comment out to debug in dev
-  return;  // ❌ 开发环境直接返回，不发送任何事件
+  return; // ❌ 开发环境直接返回，不发送任何事件
 }
 ```
 
 ### ✅ 解决方案 A：临时启用开发环境追踪
 
 **修改 `packages/excalidraw/analytics.ts`：**
+
 ```ts
 if (isDevEnv()) {
   // comment out to debug in dev
@@ -70,6 +74,7 @@ yarn build:preview
 ### 当前配置
 
 `excalidraw-app/index.tsx:19-21`：
+
 ```ts
 autocapture: false,           // ❌ 不自动捕获点击等事件
 capture_pageview: false,      // ❌ 不自动捕获页面浏览
@@ -86,9 +91,9 @@ capture_pageview: false,      // ❌ 不自动捕获页面浏览
 window.posthog || console.error("PostHog not loaded!");
 
 // 2. 手动发送测试事件
-posthog.capture('test_event', {
-  source: 'manual',
-  timestamp: new Date().toISOString()
+posthog.capture("test_event", {
+  source: "manual",
+  timestamp: new Date().toISOString(),
 });
 
 // 3. 查看 PostHog 状态
@@ -112,10 +117,14 @@ console.log("PostHog config:", posthog?.get_config?.());
 console.log("Environment:", import.meta.env.MODE);
 console.log("Tracking enabled:", import.meta.env.VITE_APP_ENABLE_TRACKING);
 console.log("PostHog enabled:", import.meta.env.VITE_APP_POSTHOG_ENABLED);
-console.log("PostHog key:", import.meta.env.VITE_APP_POSTHOG_KEY?.substring(0, 10) + "...");
+console.log(
+  "PostHog key:",
+  import.meta.env.VITE_APP_POSTHOG_KEY?.substring(0, 10) + "...",
+);
 ```
 
 **预期输出：**
+
 ```
 PostHog loaded: true
 Environment: production
@@ -132,10 +141,12 @@ PostHog key: "phc_cDJCC3..."
 4. 查看是否有 POST 请求到 `https://us.i.posthog.com/e/`
 
 **如果没有请求：**
+
 - ✅ PostHog 未初始化或环境变量配置错误
 - ✅ 代码中的 `trackEvent` 没有被调用
 
 **如果有请求但失败：**
+
 - ✅ API key 错误
 - ✅ CORS 问题
 - ✅ 网络问题
@@ -181,8 +192,9 @@ if (typeof window !== "undefined") {
 ```
 
 在浏览器控制台执行：
+
 ```js
-testPostHog()
+testPostHog();
 ```
 
 ### 步骤 4: 验证 API Key
@@ -201,6 +213,7 @@ testPostHog()
 ### 选项 A: 开发环境测试
 
 1. **编辑 `packages/excalidraw/analytics.ts`：**
+
    ```ts
    if (isDevEnv()) {
      // return;  // ← 注释这行
@@ -208,13 +221,15 @@ testPostHog()
    ```
 
 2. **重启开发服务器：**
+
    ```bash
    yarn start
    ```
 
 3. **打开浏览器控制台，执行：**
+
    ```js
-   posthog.capture('dev_test', { source: 'console' })
+   posthog.capture("dev_test", { source: "console" });
    ```
 
 4. **查看 PostHog Dashboard** → Live Events（实时事件）
@@ -222,17 +237,20 @@ testPostHog()
 ### 选项 B: 生产环境测试
 
 1. **修改 `.env.production`：**
+
    ```bash
    VITE_APP_ENABLE_TRACKING=true
    ```
 
 2. **构建并运行：**
+
    ```bash
    yarn build
    yarn start:production
    ```
 
 3. **执行测试操作：**
+
    - 导出画布为 PNG
    - 创建一些元素
    - 使用命令面板
@@ -246,10 +264,12 @@ testPostHog()
 ### 在 PostHog Dashboard 中：
 
 1. **Live Events（实时事件）：**
+
    - 导航到 **Activity** → **Live Events**
    - 应该实时看到事件流
 
 2. **Events（历史事件）：**
+
    - 导航到 **Events**
    - 查看事件列表
    - 筛选事件类型（如 `export:png`）
@@ -269,7 +289,7 @@ const posthogOptions = {
   defaults: "2026-01-30" as const,
   disable_session_recording: true,
   autocapture: false,
-  capture_pageview: true,  // ✅ 改为 true 启用页面浏览追踪
+  capture_pageview: true, // ✅ 改为 true 启用页面浏览追踪
   respect_dnt: true,
   secure_cookie: true,
   persistence: "localStorage" as const,
@@ -277,6 +297,7 @@ const posthogOptions = {
 ```
 
 **重新构建：**
+
 ```bash
 yarn build:packages
 ```
@@ -288,10 +309,12 @@ yarn build:packages
 ### 错误 1: "PostHog not loaded"
 
 **原因：**
+
 - 环境变量未设置
 - `import.meta.env.PROD` 为 false（开发模式）
 
 **解决：**
+
 ```bash
 # 检查是否在生产模式
 console.log(import.meta.env.PROD)  // 应该为 true
@@ -303,10 +326,12 @@ console.log(import.meta.env.VITE_APP_POSTHOG_KEY)  // 应该有值
 ### 错误 2: "CORS error"
 
 **原因：**
+
 - API host 配置错误
 - 使用了错误的域名
 
 **解决：**
+
 ```bash
 VITE_APP_POSTHOG_HOST=https://us.i.posthog.com  # 美国云
 # 或
@@ -318,9 +343,11 @@ VITE_APP_POSTHOG_HOST=https://app.posthog.com   # 自托管
 ### 错误 3: "401 Unauthorized"
 
 **原因：**
+
 - API key 错误或过期
 
 **解决：**
+
 - 在 PostHog Dashboard 重新生成 API key
 - 更新 `.env.production`
 
@@ -332,19 +359,23 @@ VITE_APP_POSTHOG_HOST=https://app.posthog.com   # 自托管
 
 ```js
 // 在浏览器控制台运行，复制输出
-JSON.stringify({
-  posthogLoaded: !!window.posthog,
-  config: posthog?.get_config?.(),
-  env: {
-    mode: import.meta.env.MODE,
-    prod: import.meta.env.PROD,
-    tracking: import.meta.env.VITE_APP_ENABLE_TRACKING,
-    posthogEnabled: import.meta.env.VITE_APP_POSTHOG_ENABLED,
-    hasKey: !!import.meta.env.VITE_APP_POSTHOG_KEY,
-    host: import.meta.env.VITE_APP_POSTHOG_HOST,
+JSON.stringify(
+  {
+    posthogLoaded: !!window.posthog,
+    config: posthog?.get_config?.(),
+    env: {
+      mode: import.meta.env.MODE,
+      prod: import.meta.env.PROD,
+      tracking: import.meta.env.VITE_APP_ENABLE_TRACKING,
+      posthogEnabled: import.meta.env.VITE_APP_POSTHOG_ENABLED,
+      hasKey: !!import.meta.env.VITE_APP_POSTHOG_KEY,
+      host: import.meta.env.VITE_APP_POSTHOG_HOST,
+    },
+    userAgent: navigator.userAgent,
   },
-  userAgent: navigator.userAgent,
-}, null, 2)
+  null,
+  2,
+);
 ```
 
 ---
@@ -354,15 +385,18 @@ JSON.stringify({
 当配置正确时，你应该看到：
 
 1. **浏览器控制台：**
+
    ```
    [Analytics] PostHog initialized
    ```
 
 2. **Network 标签：**
+
    - POST 请求到 `https://us.i.posthog.com/e/`
    - 状态码 200
 
 3. **PostHog Dashboard → Live Events：**
+
    - 实时显示事件
    - 事件格式：`category:action`（如 `export:png`）
 

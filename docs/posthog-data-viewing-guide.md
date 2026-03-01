@@ -13,7 +13,7 @@
 **Web Analytics** 页面需要 **pageview** 事件，但我们的配置是：
 
 ```ts
-capture_pageview: false  // 禁用了自动页面浏览追踪
+capture_pageview: false; // 禁用了自动页面浏览追踪
 ```
 
 所以 Web Analytics 页面会是空的（除了 Web Vitals）。
@@ -29,6 +29,7 @@ capture_pageview: false  // 禁用了自动页面浏览追踪
 3. 应该能看到事件列表，格式为 `category:action`
 
 **示例事件：**
+
 - `export:png`
 - `export:svg`
 - `element:create`
@@ -63,6 +64,7 @@ capture_pageview: false  // 禁用了自动页面浏览追踪
 4. 保存
 
 **可用时区：**
+
 - `Asia/Shanghai` - 中国标准时间 (UTC+8)
 - `Asia/Hong_Kong` - 香港时间 (UTC+8)
 - `Asia/Taipei` - 台湾时间 (UTC+8)
@@ -103,6 +105,7 @@ yarn start:production
 3. 点击事件查看详细属性
 
 **事件属性示例：**
+
 ```json
 {
   "category": "export",
@@ -131,16 +134,19 @@ yarn start:production
 ### 步骤 2: 配置图表
 
 **示例 1: 导出趋势**
+
 - Event: `export:png` + `export:svg`
 - Breakdown: `action`
 - Time Range: Last 7 days
 
 **示例 2: 最常用功能**
+
 - Event: All events
 - Breakdown: `category`
 - Visualization: Bar chart
 
 **示例 3: 每日活跃操作**
+
 - Event: All events
 - Aggregation: Unique users (if you track user IDs)
 - Time Range: Last 30 days
@@ -159,29 +165,29 @@ yarn start:production
 
 ```js
 // 1. 检查 Web Vitals 是否已发送
-posthog._queued_events
+posthog._queued_events;
 
 // 2. 手动发送测试事件
-posthog.capture('manual_test', {
-  source: 'console',
-  timestamp: new Date().toISOString()
-})
+posthog.capture("manual_test", {
+  source: "console",
+  timestamp: new Date().toISOString(),
+});
 
 // 3. 查看 PostHog 配置
-posthog.get_config()
+posthog.get_config();
 ```
 
 ### 使用测试工具（如果已启动开发服务器）：
 
 ```js
 // 检查状态
-window.posthogTest.checkStatus()
+window.posthogTest.checkStatus();
 
 // 发送测试事件
-window.posthogTest.sendTest()
+window.posthogTest.sendTest();
 
 // 模拟用户操作
-window.posthogTest.simulateUserEvents()
+window.posthogTest.simulateUserEvents();
 ```
 
 ---
@@ -205,6 +211,7 @@ disable_session_recording: true,  // ❌ 不录制会话
 ```
 
 **结果：**
+
 - ✅ 隐私友好：只追踪明确定义的事件
 - ✅ 数据精准：只有业务相关的事件
 - ❌ Web Analytics 页面大部分为空
@@ -221,9 +228,9 @@ disable_session_recording: true,  // ❌ 不录制会话
 const posthogOptions = {
   api_host: import.meta.env.VITE_APP_POSTHOG_HOST || "https://us.i.posthog.com",
   defaults: "2026-01-30" as const,
-  disable_session_recording: true,  // 保持禁用
-  autocapture: false,                // 保持禁用
-  capture_pageview: true,            // ✅ 改为 true
+  disable_session_recording: true, // 保持禁用
+  autocapture: false, // 保持禁用
+  capture_pageview: true, // ✅ 改为 true
   respect_dnt: true,
   secure_cookie: true,
   persistence: "localStorage" as const,
@@ -231,17 +238,20 @@ const posthogOptions = {
 ```
 
 **重新构建：**
+
 ```bash
 yarn build:packages
 yarn build
 ```
 
 **优点：**
+
 - ✅ Web Analytics 页面有数据
 - ✅ 页面浏览统计
 - ✅ 路径分析
 
 **缺点：**
+
 - ⚠️ 收集更多数据（但仍然隐私友好）
 
 ---
@@ -250,13 +260,13 @@ yarn build
 
 ### 当前状态
 
-| 项目              | 状态  | 位置                            |
-| ----------------- | ----- | ------------------------------- |
-| **Web Vitals**    | ✅ 有  | Web Analytics → Performance     |
-| **自定义事件**    | ✅ 有  | Product Analytics → Events      |
-| **页面浏览**      | ❌ 无  | 已禁用（隐私设置）              |
-| **用户路径**      | ❌ 无  | 需要 pageview                   |
-| **实时事件**      | ✅ 有  | Activity → Live Events          |
+| 项目           | 状态  | 位置                        |
+| -------------- | ----- | --------------------------- |
+| **Web Vitals** | ✅ 有 | Web Analytics → Performance |
+| **自定义事件** | ✅ 有 | Product Analytics → Events  |
+| **页面浏览**   | ❌ 无 | 已禁用（隐私设置）          |
+| **用户路径**   | ❌ 无 | 需要 pageview               |
+| **实时事件**   | ✅ 有 | Activity → Live Events      |
 
 ### 推荐查看位置
 
@@ -278,11 +288,13 @@ yarn build
 ### Q1: 为什么 Events 页面也是空的？
 
 **可能原因：**
+
 1. 没有在生产环境运行（`import.meta.env.PROD = false`）
 2. 环境变量未设置正确
 3. 还没有执行任何操作触发事件
 
 **解决：**
+
 ```bash
 # 确认环境变量
 cat .env.production | grep TRACKING
@@ -300,6 +312,7 @@ VITE_APP_ENABLE_TRACKING=true
 ### Q3: 时区改了还是显示美国时间？
 
 **解决：**
+
 1. 清除浏览器缓存
 2. 退出登录 PostHog
 3. 重新登录

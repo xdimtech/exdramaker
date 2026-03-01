@@ -19,28 +19,34 @@
 ### 2. 配置 URL 设置
 
 #### 路径
+
 左侧菜单 → **Authentication** → **URL Configuration**
 
 #### 配置项
 
 **A. Site URL**
+
 ```
 https://exdramaker.curiopal.cn
 ```
+
 - 这是应用的主 URL
 - 用户注册确认邮件会使用这个 URL
 
 **B. Redirect URLs** ⭐ 关键配置
+
 ```
 https://exdramaker.curiopal.cn/auth/callback
 http://localhost:3000/auth/callback
 ```
+
 - **必须包含生产环境 URL**: `https://exdramaker.curiopal.cn/auth/callback`
 - **可选开发环境 URL**: `http://localhost:3000/auth/callback`
 - 每行一个 URL
 - **确保使用 HTTPS**（生产环境）
 
 **C. Additional Redirect URLs** (如果有多个域名)
+
 ```
 https://exdramaker.vercel.app/auth/callback  # Vercel 部署
 https://www.exdramaker.curiopal.cn/auth/callback  # www 子域名
@@ -49,9 +55,11 @@ https://www.exdramaker.curiopal.cn/auth/callback  # www 子域名
 ### 3. 配置 OAuth 提供商（Google 登录）
 
 #### 路径
+
 左侧菜单 → **Authentication** → **Providers** → **Google**
 
 #### 启用 Google Provider
+
 1. 切换开关为 **Enabled**
 2. 输入 Google OAuth 凭据:
    - **Client ID**: 从 Google Cloud Console 获取
@@ -95,6 +103,7 @@ const { error } = await supabase.auth.signInWithOAuth({
 ```
 
 代码已经正确使用了 `window.location.origin`，所以：
+
 - 本地开发: `http://localhost:3000/auth/callback`
 - 生产环境: `https://exdramaker.curiopal.cn/auth/callback`
 
@@ -131,6 +140,7 @@ VITE_APP_SUPABASE_ANON_KEY=eyJhbGciOi... # 已配置
 ### 1. 添加 URL 后仍然跳转到 localhost
 
 **解决方案**:
+
 - 清除浏览器缓存
 - 等待 1-2 分钟（Supabase 配置生效需要时间）
 - 使用无痕窗口测试
@@ -140,6 +150,7 @@ VITE_APP_SUPABASE_ANON_KEY=eyJhbGciOi... # 已配置
 **原因**: Google Cloud Console 中没有配置正确的回调 URL
 
 **解决方案**:
+
 1. 访问 Google Cloud Console
 2. APIs & Services → Credentials
 3. 找到 OAuth 2.0 Client ID
@@ -153,13 +164,14 @@ VITE_APP_SUPABASE_ANON_KEY=eyJhbGciOi... # 已配置
 **原因**: Site URL 配置不正确
 
 **解决方案**:
+
 - 确认 Site URL 设置为: `https://exdramaker.curiopal.cn`
 - 重新发送验证邮件
 
 ### 4. 多个域名需要支持登录
 
-**解决方案**:
-在 Redirect URLs 中添加所有域名的回调 URL:
+**解决方案**: 在 Redirect URLs 中添加所有域名的回调 URL:
+
 ```
 https://exdramaker.curiopal.cn/auth/callback
 https://exdramaker.vercel.app/auth/callback
@@ -179,6 +191,7 @@ https://www.exdramaker.curiopal.cn/auth/callback
 ### 环境分离
 
 **开发环境** (`.env.development`):
+
 ```bash
 VITE_APP_SUPABASE_URL=https://gqczautqjzphjkkqlwwg.supabase.co
 VITE_APP_SUPABASE_ANON_KEY=eyJ...
@@ -186,6 +199,7 @@ VITE_APP_SUPABASE_ANON_KEY=eyJ...
 ```
 
 **生产环境** (`.env.production`):
+
 ```bash
 VITE_APP_SUPABASE_URL=https://gqczautqjzphjkkqlwwg.supabase.co
 VITE_APP_SUPABASE_ANON_KEY=eyJ...
@@ -212,6 +226,7 @@ yarn build:prod
 ## 支持
 
 如果仍有问题:
+
 1. 检查 Supabase Dashboard → Logs → Auth
 2. 浏览器控制台查看错误信息
 3. 网络标签查看重定向 URL

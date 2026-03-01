@@ -2,9 +2,7 @@
 
 ## 当前状态
 
-✅ **Activity → Live Events** - 有数据（自定义事件）
-❌ **Web Analytics** - 大部分为空（缺少 pageview）
-✅ **Web Analytics → Performance** - 有数据（Web Vitals）
+✅ **Activity → Live Events** - 有数据（自定义事件） ❌ **Web Analytics** - 大部分为空（缺少 pageview） ✅ **Web Analytics → Performance** - 有数据（Web Vitals）
 
 ---
 
@@ -12,12 +10,12 @@
 
 ### Web Analytics 需要这些事件：
 
-| 事件类型 | 当前状态 | 说明 |
-|---------|---------|------|
-| `$pageview` | ❌ 禁用 | 页面浏览追踪 |
-| `$pageleave` | ❌ 禁用 | 页面离开追踪 |
-| `$autocapture` | ❌ 禁用 | 自动捕获点击 |
-| `$web_vitals` | ✅ 启用 | 性能指标（你已经有了）|
+| 事件类型       | 当前状态 | 说明                   |
+| -------------- | -------- | ---------------------- |
+| `$pageview`    | ❌ 禁用  | 页面浏览追踪           |
+| `$pageleave`   | ❌ 禁用  | 页面离开追踪           |
+| `$autocapture` | ❌ 禁用  | 自动捕获点击           |
+| `$web_vitals`  | ✅ 启用  | 性能指标（你已经有了） |
 
 ### 我们的隐私优先配置：
 
@@ -28,6 +26,7 @@ capture_pageview: false,    // 不自动追踪页面浏览
 ```
 
 **设计原因：**
+
 - ✅ 隐私友好 - 只追踪明确定义的业务事件
 - ✅ 数据精准 - 避免噪音数据
 - ✅ 性能优化 - 减少追踪开销
@@ -49,12 +48,14 @@ capture_pageview: true,     // ✅ Enable page tracking
 ```
 
 **启用后会获得：**
+
 - ✅ 页面浏览统计
 - ✅ 访客趋势图
 - ✅ 页面路径分析
 - ✅ Web Analytics 完整功能
 
 **重新构建：**
+
 ```bash
 yarn build:packages
 # 开发环境重启
@@ -82,12 +83,14 @@ capture_pageview: true,     // ✅ Enable page tracking
 ```
 
 **启用后会获得：**
+
 - ✅ 所有选项 1 的功能
 - ✅ 自动捕获按钮点击
 - ✅ 自动捕获表单提交
 - ✅ 更丰富的用户行为数据
 
 **⚠️ 注意：**
+
 - 会收集更多数据（但仍然隐私友好）
 - 可能增加网络请求
 - 需要在隐私政策中说明
@@ -104,13 +107,13 @@ const posthogOptions = {
   defaults: "2026-01-30" as const,
 
   // 隐私设置（保持不变）
-  disable_session_recording: true,  // ✅ 保持禁用
-  respect_dnt: true,                // ✅ 保持启用
-  secure_cookie: true,              // ✅ 保持启用
+  disable_session_recording: true, // ✅ 保持禁用
+  respect_dnt: true, // ✅ 保持启用
+  secure_cookie: true, // ✅ 保持启用
 
   // 数据收集（调整）
-  autocapture: false,               // ❌ 保持禁用（手动事件更精准）
-  capture_pageview: true,           // ✅ 启用页面浏览
+  autocapture: false, // ❌ 保持禁用（手动事件更精准）
+  capture_pageview: true, // ✅ 启用页面浏览
 
   persistence: "localStorage" as const,
   loaded: (posthog: any) => {
@@ -128,16 +131,19 @@ const posthogOptions = {
 ### 当前配置（隐私优先）
 
 **优点：**
+
 - ✅ 最小化数据收集
 - ✅ 精准的业务事件
 - ✅ 更好的性能
 
 **缺点：**
+
 - ❌ Web Analytics 页面大部分为空
 - ❌ 无法追踪页面浏览量
 - ❌ 无法分析用户路径
 
 **数据位置：**
+
 - **Product Analytics → Events** - ✅ 所有自定义事件
 - **Activity → Live Events** - ✅ 实时事件流
 - **Web Analytics** - ⚠️ 仅 Web Vitals
@@ -147,16 +153,19 @@ const posthogOptions = {
 ### 启用 Pageview 后
 
 **优点：**
+
 - ✅ 所有当前优点
 - ✅ Web Analytics 完整功能
 - ✅ 页面浏览统计
 - ✅ 用户路径分析
 
 **缺点：**
+
 - ⚠️ 轻微增加数据量
 - ⚠️ 需要在隐私政策中说明
 
 **数据位置：**
+
 - **Product Analytics → Events** - ✅ 所有事件 + pageview
 - **Activity → Live Events** - ✅ 实时事件流
 - **Web Analytics** - ✅ 完整功能
@@ -199,10 +208,10 @@ yarn start
 
 ```js
 // 手动发送一个 pageview 事件
-posthog.capture('$pageview', {
+posthog.capture("$pageview", {
   $current_url: window.location.href,
-  $pathname: window.location.pathname
-})
+  $pathname: window.location.pathname,
+});
 ```
 
 然后去 **Activity → Live Events** 查看，应该看到 `$pageview` 事件。
@@ -218,11 +227,13 @@ posthog.capture('$pageview', {
 ### ✅ 使用这些位置查看数据：
 
 1. **Product Analytics → Events**
+
    - 查看所有自定义事件
    - 创建自定义图表
    - 按时间、类别筛选
 
 2. **Product Analytics → Insights**
+
    - 创建自定义仪表板
    - 例如：导出次数趋势、最常用功能等
 
@@ -256,17 +267,18 @@ posthog.capture('$pageview', {
 
 ### 如果你需要：
 
-| 需求 | 推荐配置 |
-|------|---------|
-| **只看业务事件** | 保持当前配置 ✅ |
-| **页面浏览统计** | 启用 `capture_pageview` |
-| **用户路径分析** | 启用 `capture_pageview` |
+| 需求             | 推荐配置                                |
+| ---------------- | --------------------------------------- |
+| **只看业务事件** | 保持当前配置 ✅                         |
+| **页面浏览统计** | 启用 `capture_pageview`                 |
+| **用户路径分析** | 启用 `capture_pageview`                 |
 | **完整用户行为** | 启用 `autocapture` + `capture_pageview` |
-| **最大隐私保护** | 保持当前配置 ✅ |
+| **最大隐私保护** | 保持当前配置 ✅                         |
 
 ### 我的建议：
 
 **对于你的场景：**
+
 - 如果你主要关心**业务指标**（导出、创建元素等）→ **保持当前配置**
 - 如果你想要**完整的 Web Analytics** → **启用 pageview**
 
@@ -284,11 +296,13 @@ posthog.capture('$pageview', {
 - ⚠️ **Web Analytics 为空是因为隐私配置**
 
 **如果需要 Web Analytics：**
+
 - 修改 `capture_pageview: true`
 - 重启服务器
 - 等待 1-2 分钟看到数据
 
 **如果保持当前配置：**
+
 - 使用 **Product Analytics → Events**
 - 创建自定义 Insights 和仪表板
 - 这样更精准、更隐私友好
