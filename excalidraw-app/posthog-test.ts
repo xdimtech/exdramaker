@@ -36,7 +36,7 @@ export const posthogTest = {
     );
     console.log(
       "VITE_APP_POSTHOG_KEY:",
-      import.meta.env.VITE_APP_POSTHOG_KEY?.substring(0, 10) + "...",
+      `${import.meta.env.VITE_APP_POSTHOG_KEY?.substring(0, 10)}...`,
     );
     console.log(
       "VITE_APP_POSTHOG_HOST:",
@@ -218,7 +218,7 @@ export const posthogTest = {
         VITE_APP_ENABLE_TRACKING: import.meta.env.VITE_APP_ENABLE_TRACKING,
         VITE_APP_POSTHOG_ENABLED: import.meta.env.VITE_APP_POSTHOG_ENABLED,
         VITE_APP_POSTHOG_KEY: import.meta.env.VITE_APP_POSTHOG_KEY
-          ? import.meta.env.VITE_APP_POSTHOG_KEY.substring(0, 10) + "..."
+          ? `${import.meta.env.VITE_APP_POSTHOG_KEY.substring(0, 10)}...`
           : "NOT SET",
         VITE_APP_POSTHOG_HOST: import.meta.env.VITE_APP_POSTHOG_HOST,
         VITE_APP_POSTHOG_DEBUG: import.meta.env.VITE_APP_POSTHOG_DEBUG,

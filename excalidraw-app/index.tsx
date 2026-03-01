@@ -8,10 +8,7 @@ import "../excalidraw-app/sentry";
 import ExcalidrawApp from "./App";
 
 // Import PostHog test utilities in dev/debug mode
-if (
-  import.meta.env.DEV ||
-  import.meta.env.VITE_APP_POSTHOG_DEBUG === "true"
-) {
+if (import.meta.env.DEV || import.meta.env.VITE_APP_POSTHOG_DEBUG === "true") {
   import("./posthog-test");
 }
 
